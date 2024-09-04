@@ -2,12 +2,12 @@
 import dynamic from "next/dynamic";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 import { useTheme } from '@mui/material/styles';
-import { Grid, Stack, Typography, Avatar } from '@mui/material';
+import { Grid, Stack, Typography, Avatar, Button } from '@mui/material';
 import { IconArrowUpLeft } from '@tabler/icons-react';
 
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
 
-const YearlyBreakup = () => {
+const PortfolioCard = () => {
   // chart color
   const theme = useTheme();
   const primary = theme.palette.primary.main;
@@ -68,7 +68,7 @@ const YearlyBreakup = () => {
         {/* column */}
         <Grid item xs={7} sm={7}>
           <Typography variant="h3" fontWeight="700">
-            $36,358
+            $36,358 {/* TODO: Call api to get the total */}
           </Typography>
           <Stack direction="row" spacing={1} mt={1} alignItems="center">
             <Avatar sx={{ bgcolor: successlight, width: 27, height: 27 }}>
@@ -81,7 +81,12 @@ const YearlyBreakup = () => {
               last year
             </Typography>
           </Stack>
-          <Stack spacing={3} mt={5} direction="row">
+          <Stack spacing={2} mt={3}>
+            <Button variant="contained" color="primary" >
+              Deposit
+            </Button>
+          </Stack>
+          {/* <Stack spacing={3} mt={5} direction="row">
             <Stack direction="row" spacing={1} alignItems="center">
               <Avatar
                 sx={{ width: 9, height: 9, bgcolor: primary, svg: { display: 'none' } }}
@@ -98,7 +103,7 @@ const YearlyBreakup = () => {
                 2023
               </Typography>
             </Stack>
-          </Stack>
+          </Stack> */}
         </Grid>
         {/* column */}
         <Grid item xs={5} sm={5}>
@@ -114,4 +119,4 @@ const YearlyBreakup = () => {
   );
 };
 
-export default YearlyBreakup;
+export default PortfolioCard;
