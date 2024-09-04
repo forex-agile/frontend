@@ -1,7 +1,6 @@
-import React from 'react';
-import { Box, Typography, Button, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import Link  from 'next/link';
-
+import React, { useState } from 'react';
+import { Box, Typography, Button, IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import CustomTextField from '@/app/(DashboardLayout)/components/forms/theme-elements/CustomTextField';
 import { Stack } from '@mui/system';
 
@@ -9,69 +8,132 @@ interface registerType {
     title?: string;
     subtitle?: JSX.Element | JSX.Element[];
     subtext?: JSX.Element | JSX.Element[];
-  }
+}
 
-const AuthRegister = ({ title, subtitle, subtext }: registerType) => (
-    <>
-        {title ? (
-            <Typography fontWeight="700" variant="h2" mb={1}>
-                {title}
-            </Typography>
-        ) : null}
+const AuthRegister = ({ title, subtitle, subtext }: registerType) => {
+    const [email, setEmail] = useState<string>('');
+    const [emailError, setEmailError] = useState<string | null>(null);
+    const [password, setPassword] = useState<string>('');
+    const [passwordError, setPasswordError] = useState<string | null>(null);
+    const [passwordVisible, setPasswordVisible] = useState(false);
+    const [formError, setFormError] = useState<string | null>(null);
 
-        {subtext}
+    const togglePasswordVisibility = () => {
+        setPasswordVisible(!passwordVisible);
+    };
 
-        <Box>
-            <Stack mb={3}> 
-                <Typography variant="subtitle1"
-                    fontWeight={600} component="label" htmlFor='name' mb="5px">Username</Typography> 
-                <CustomTextField id="name" variant="outlined" fullWidth required/>
+    const validateEmail = (email: string): boolean => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
 
-                <Typography variant="subtitle1"
-                    fontWeight={600} component="label" htmlFor='email' mb="5px" mt="25px">Email</Typography>
-                <CustomTextField id="email" variant="outlined" fullWidth required/>
+    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setEmail(value);
+        if (validateEmail(value)) {
+            setEmailError(null);
+        } else {
+            setEmailError("Please enter a valid email address.");
+        }
+    };
 
-                <Typography variant="subtitle1"
-                    fontWeight={600} component="label" htmlFor='password' mb="5px" mt="25px">Password</Typography>
-                <CustomTextField id="password" variant="outlined" fullWidth requited/>
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setPassword(value);
+        if (value.length < 5) {
+            setPasswordError("Password must be at least 5 characters long.");
+        } else {
+            setPasswordError(null);
+        }
+    };
 
-                <Typography variant="subtitle1"
-                    fontWeight={600} component="label" htmlFor='bank_ac_id' mb="5px" mt="25px">Bank account ID</Typography>
-                <CustomTextField id="bank_ac_id" variant="outlined" fullWidth required
-                    inputProps={{
-                        pattern: "\\d{9,12}",
-                        title: "Bank account ID must be between 9 and 12 digits"
-                    }} />
+    const handleSubmit = (event: React.FormEvent) => {
+        event.preventDefault();
+        if (emailError || !validateEmail(email)) {
+            setFormError("Please enter a valid email address.");
+        } else if (passwordError || password.length < 5) {
+            setFormError("Please ensure all fields are filled out correctly.");
+        } else {
+            setFormError(null);
+            // Redirect to sign-in page
+            window.location.href = "/authentication/login";
+            console.log("Form submitted successfully!");
+        }
+    };
 
-                <FormControl variant="outlined" fullWidth sx={{ mt: "25px" }} required>
-                    <InputLabel id="preferred-currency-label">Preferred Currency Code</InputLabel>
-                    <Select
-                        labelId="preferred-currency-label"
-                        id="preferred_currency_code"
-                        label="Preferred Currency Code"
-                        defaultValue=""
-                    >
-                        <MenuItem value=""><em>None</em></MenuItem>
-                        <MenuItem value="USD">USD</MenuItem>
-                        <MenuItem value="EUR">EUR</MenuItem>
-                        <MenuItem value="JPY">JPY</MenuItem>
-                        <MenuItem value="GBP">GBP</MenuItem>
-                        <MenuItem value="AUD">AUD</MenuItem>
-                        <MenuItem value="CAD">CAD</MenuItem>
-                        <MenuItem value="CHF">CHF</MenuItem>
-                        <MenuItem value="CNY">CNY</MenuItem>
-                        <MenuItem value="INR">INR</MenuItem>
-                        {/* Add more currencies as needed */}
-                    </Select>
-                </FormControl>
+    return (
+        <>
+            {title && (
+                <Typography fontWeight="700" variant="h2" mb={1}>
+                    {title}
+                </Typography>
+            )}
 
-            </Stack>
-            <Button color="primary" variant="contained" size="large" fullWidth component={Link} href="/authentication/login">
-                Sign Up
-            </Button>
-        </Box>
-        {subtitle}
-    </>
-);
+            {subtext}
+
+            <Box component="form" onSubmit={handleSubmit}>
+                <Stack mb={3}>
+                    <Typography variant="subtitle1" fontWeight={600} component="label" htmlFor='username' mb="5px">
+                        Username
+                    </Typography>
+                    <CustomTextField id="username" variant="outlined" fullWidth required />
+
+                    <Typography variant="subtitle1" fontWeight={600} component="label" htmlFor='email' mb="5px" mt="25px">
+                        Email
+                    </Typography>
+                    <CustomTextField
+                        id="email"
+                        variant="outlined"
+                        fullWidth
+                        required
+                        value={email}
+                        onChange={handleEmailChange}
+                        placeholder="example@example.com"
+                        error={!!emailError}
+                        helperText={emailError}
+                    />
+
+                    <Typography variant="subtitle1" fontWeight={600} component="label" htmlFor='password' mb="5px" mt="25px">
+                        Password
+                    </Typography>
+                    <CustomTextField
+                        id="password"
+                        variant="outlined"
+                        fullWidth
+                        required
+                        type={passwordVisible ? "text" : "password"}
+                        value={password}
+                        onChange={handlePasswordChange}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        onClick={togglePasswordVisibility}
+                                        edge="end"
+                                        aria-label="toggle password visibility"
+                                    >
+                                        {passwordVisible ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
+                        error={!!passwordError}
+                        helperText={passwordError}
+                    />
+
+                    {formError && (
+                        <Typography color="error" variant="body2" mt="15px">
+                            {formError}
+                        </Typography>
+                    )}
+                </Stack>
+                <Button color="primary" variant="contained" size="large" fullWidth type="submit">
+                    Sign Up
+                </Button>
+            </Box>
+            {subtitle}
+        </>
+    );
+};
 
 export default AuthRegister;
