@@ -24,7 +24,7 @@ const Menuitems = [
   },
   {
     navlabel: true,
-    subheader: "Utilities",
+    subheader: "Trade",
   },
   {
     id: uniqueId(),
@@ -40,23 +40,38 @@ const Menuitems = [
   },
   {
     navlabel: true,
-    subheader: "Auth",
+    subheader: "User Account",
   },
+  //TODO: New page for a detail my portfolio
   {
     id: uniqueId(),
-    title: "Login",
+    title: "My Portfolio",
     icon: IconLogin,
-    href: "/authentication/login",
+    href: "",
   },
+  //TODO: New page for transactions record using RecentTransactions.tsx
   {
     id: uniqueId(),
-    title: "Register",
-    icon: IconUserPlus,
-    href: "/authentication/register",
+    title: "Transactions",
+    icon: IconLogin,
+    href: "",
   },
+  
+  // {
+  //   id: uniqueId(),
+  //   title: "Login",
+  //   icon: IconLogin,
+  //   href: "/authentication/login",
+  // },
+  // {
+  //   id: uniqueId(),
+  //   title: "Register",
+  //   icon: IconUserPlus,
+  //   href: "/authentication/register",
+  // },
   {
     navlabel: true,
-    subheader: "Extra",
+    subheader: "OTHERS",
   },
   {
     id: uniqueId(),

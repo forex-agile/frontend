@@ -5,37 +5,39 @@ import PageContainer from '@/app/(DashboardLayout)/components/container/PageCont
 import SalesOverview from '@/app/(DashboardLayout)/components/dashboard/SalesOverview';
 import PortfolioCard from '@/app/(DashboardLayout)/components/dashboard/PortfolioCard';
 import RecentTransactions from '@/app/(DashboardLayout)/components/dashboard/RecentTransactions';
-import ProductPerformance from '@/app/(DashboardLayout)/components/dashboard/ProductPerformance';
+import ForwardOrderTable from '@/app/(DashboardLayout)/components/dashboard/ForwardOrderTable';
 import Blog from '@/app/(DashboardLayout)/components/dashboard/Blog';
 import MonthlyEarnings from '@/app/(DashboardLayout)/components/dashboard/MonthlyEarnings';
+import FxRatesTable from './components/dashboard/FxRatesTable';
+import CreateOrderCard from './components/dashboard/CreateOrderCard';
 
 const Dashboard = () => {
   return (
-    <PageContainer title="Dashboard" description="this is Dashboard">
+    <PageContainer title="HomePage" description="This is a homepage">
       <Box>
-        <Grid container spacing={3}>
-          <Grid item xs={12} lg={8}>
-            <SalesOverview />
-          </Grid>
-          <Grid item xs={12} lg={4}>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <PortfolioCard />
-              </Grid>
-              <Grid item xs={12}>
-                <MonthlyEarnings />
-              </Grid>
+        <Grid container spacing={2}>
+          <Grid container item spacing={2} lg={8}>
+            <Grid item xs={6} lg={12}>
+              <FxRatesTable />
+            </Grid>
+            <Grid item xs={6} lg={12}>
+              <ForwardOrderTable />
             </Grid>
           </Grid>
-          <Grid item xs={12} lg={4}>
-            <RecentTransactions />
+
+          <Grid container item spacing={2} lg={4}>
+            <Grid  item xs={12} lg={12}>
+              <PortfolioCard />
+            </Grid>
+            <Grid item xs={"auto"} lg={12}>
+              <CreateOrderCard />
+            </Grid>
+            <Grid item xs={"auto"} lg={12}>
+              <CreateOrderCard />
+            </Grid>
           </Grid>
-          <Grid item xs={12} lg={8}>
-            <ProductPerformance />
-          </Grid>
-          <Grid item xs={12}>
-            <Blog />
-          </Grid>
+         
+
         </Grid>
       </Box>
     </PageContainer>
