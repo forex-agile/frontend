@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography, Button, IconButton, InputAdornment } from '@mui/material';
+import { Box, Typography, Button, IconButton, InputAdornment, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import CustomTextField from '@/app/(DashboardLayout)/components/forms/theme-elements/CustomTextField';
 import { Stack } from '@mui/system';
@@ -17,6 +17,7 @@ const AuthRegister = ({ title, subtitle, subtext }: registerType) => {
     const [passwordError, setPasswordError] = useState<string | null>(null);
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [formError, setFormError] = useState<string | null>(null);
+    const [openDialog, setOpenDialog] = useState(false);
 
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
@@ -47,18 +48,44 @@ const AuthRegister = ({ title, subtitle, subtext }: registerType) => {
         }
     };
 
-    const handleSubmit = (event: React.FormEvent) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+    
+        const baseURL = process.env.REACT_APP_API_BASE_URL;
+        const endpoint = "/api/v1/register";
+        const url = `${baseURL}${endpoint}`;
+    
         if (emailError || !validateEmail(email)) {
             setFormError("Please enter a valid email address.");
         } else if (passwordError || password.length < 5) {
             setFormError("Please ensure all fields are filled out correctly.");
         } else {
             setFormError(null);
-            // Redirect to sign-in page
-            window.location.href = "/authentication/login";
-            console.log("Form submitted successfully!");
+            const formData = { email: email, password: password };
+    
+            try {
+                // const response = await fetch(url, {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify(formData),
+                // });
+    
+                // if (!response.ok) {
+                //     throw new Error('Network response was not ok');
+                // }
+    
+                setOpenDialog(true); // Open the success dialog
+    
+            } catch (error) {
+                console.error("Error submitting the form:", error);
+                setFormError("There was an issue submitting the form. Please try again.");
+            }
         }
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        window.location.href = "/authentication/login";  // Redirect after closing the dialog
     };
 
     return (
@@ -132,6 +159,27 @@ const AuthRegister = ({ title, subtitle, subtext }: registerType) => {
                 </Button>
             </Box>
             {subtitle}
+
+            <Dialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                sx={{ '& .MuiDialog-paper': { width: '400px', maxWidth: '100%' } }}
+            >
+                <DialogTitle sx={{ backgroundColor: '#3f51b5', color: '#fff', padding: '10px' }}>
+                    Success
+                </DialogTitle>
+                <DialogContent>
+                    <Typography variant="h6" sx={{ textAlign: 'center', fontWeight: 'bold', marginTop: '30px', color: 'green' }}>
+                        Account created successfully!
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ justifyContent: 'center', padding: '16px' }}>
+                    <Button onClick={handleCloseDialog} color="primary" variant="contained">
+                        OK
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
         </>
     );
 };

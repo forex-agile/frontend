@@ -59,13 +59,13 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => (
         alignItems="center"
         my={2}
       >
-        <FormGroup>
+        {/* <FormGroup>
           <FormControlLabel
             control={<Checkbox defaultChecked />}
             label="Remeber this Device"
           />
-        </FormGroup>
-        <Typography
+        </FormGroup> */}
+        {/* <Typography
           component={Link}
           href="/"
           fontWeight="500"
@@ -75,7 +75,7 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => (
           }}
         >
           Forgot Password ?
-        </Typography>
+        </Typography> */}
       </Stack>
     </Stack>
     <Box>
