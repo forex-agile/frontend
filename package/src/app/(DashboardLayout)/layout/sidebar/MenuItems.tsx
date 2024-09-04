@@ -42,19 +42,18 @@ const Menuitems = [
     navlabel: true,
     subheader: "User Account",
   },
-  //TODO: New page for a detail my portfolio
+  
   {
     id: uniqueId(),
     title: "My Portfolio",
     icon: IconLogin,
-    href: "",
+    href: "/userAccount/myPortfolio",
   },
-  //TODO: New page for transactions record using RecentTransactions.tsx
   {
     id: uniqueId(),
     title: "Transactions",
     icon: IconLogin,
-    href: "",
+    href: "/userAccount/transactions",
   },
   
   // {
