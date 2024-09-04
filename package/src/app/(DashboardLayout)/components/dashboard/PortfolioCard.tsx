@@ -60,15 +60,17 @@ const PortfolioCard = () => {
       },
     ],
   };
+
+  {/* TODO: Tune the chart based on ratio for each currency */}
   const seriescolumnchart: any = [38, 40, 25];
 
   return (
-    <DashboardCard title="Yearly Breakup">
+    <DashboardCard title="My Portfolio $">
       <Grid container spacing={3}>
         {/* column */}
         <Grid item xs={7} sm={7}>
-          <Typography variant="h3" fontWeight="700">
-            $36,358 {/* TODO: Call api to get the total */}
+          <Typography variant="h4" fontWeight="700">
+            $36,358 (HKD) {/* TODO: Call api to get the balance and currency type */}
           </Typography>
           <Stack direction="row" spacing={1} mt={1} alignItems="center">
             <Avatar sx={{ bgcolor: successlight, width: 27, height: 27 }}>
@@ -81,9 +83,11 @@ const PortfolioCard = () => {
               last year
             </Typography>
           </Stack>
+          
           <Stack spacing={2} mt={3}>
-            <Button variant="contained" color="primary" >
-              Deposit
+            {/* TODO: Trigger deposit function */}
+            <Button variant="contained" color="primary">
+              Deposit 
             </Button>
           </Stack>
           {/* <Stack spacing={3} mt={5} direction="row">
