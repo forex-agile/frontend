@@ -72,7 +72,9 @@ const MSidebar = ({
               {/* ------------------------------------------- */}
               {/* Logo */}
               {/* ------------------------------------------- */}
-              <Logo img="/images/logos/dark-logo.svg" />
+
+              {/* TODO: ADD logo */}
+              {/* <Logo img="/images/logos/dark-logo.svg" /> */}
               <Box>
                 {/* ------------------------------------------- */}
                 {/* Sidebar Items */}
