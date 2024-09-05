@@ -9,6 +9,7 @@ type Props = {
 };
 
 const PageContainer = ({ title, description, children }: Props) => (
+  // Dynamic title and description for SEO
   <HelmetProvider>
     <div>
       <Helmet>
