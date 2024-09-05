@@ -2,7 +2,7 @@
 import dynamic from "next/dynamic";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 import { useTheme } from '@mui/material/styles';
-import { Grid, Stack, Typography, Avatar, Button, TextField, } from '@mui/material';
+import { Grid, Stack, Typography, Avatar, Button, TextField, Box, } from '@mui/material';
 import { IconArrowUpLeft } from '@tabler/icons-react';
 
 // Dialog
@@ -15,7 +15,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 // Components
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
-import React from "react";
+import React, { use, useEffect } from "react";
+import { ST } from "next/dist/shared/lib/utils";
 
 const PortfolioCard = () => {
   // chart color
@@ -28,86 +29,127 @@ const PortfolioCard = () => {
   const [DepositeFormOpen, setDepositeFormOpen] = React.useState(false);
   const [TransferFormOpen, setTransferFormOpen] = React.useState(false);
 
-  const handleDepositFormClickOpen = () => {
-    setDepositeFormOpen(true);
-  };
+  const handleDepositFormClickOpen = () => { setDepositeFormOpen(true) };
+  const handleDepositeFormClose = () => { setDepositeFormOpen(false) };
+  const handleTransferFormClickOpen = () => { setTransferFormOpen(true) };
+  const handleTransferFormClose = () => { setTransferFormOpen(false) };
 
-  const handleDepositeFormClose = () => {
-    setDepositeFormOpen(false);
-  };
+  // Variables
+  const [portfolioData, setPortfolioData] = React.useState({});
+  const [portfolioBalance, setPortfolioBalance] = React.useState(16888);
+  const [portfolioCurrency, setPortfolioCurrency] = React.useState("HKD");
 
-  const handleTransferFormClickOpen = () => {
-    setTransferFormOpen(true);
-  };
+  // Submit deposite form data to backend by api
+  const handleDepositeFormSubmit = () => {
 
-  const handleTransferFormClose = () => {
-    setTransferFormOpen(false);
-  };
+  }
+
+  // Submit transfer form data to backend by api
+  const handleTransferFormSubmit = () => {
+
+  }
+
+  // Update the portfolio card with the latest data,
+  useEffect(() => {
+
+  });
 
 
   // chart
-  const optionscolumnchart: any = {
-    chart: {
-      type: 'donut',
-      fontFamily: "'Plus Jakarta Sans', sans-serif;",
-      foreColor: '#adb0bb',
-      toolbar: {
-        show: false,
-      },
-      height: 155,
-    },
-    colors: [primary, primarylight, '#F9F9FD'],
-    plotOptions: {
-      pie: {
-        startAngle: 0,
-        endAngle: 360,
-        donut: {
-          size: '75%',
-          background: 'transparent',
-        },
-      },
-    },
-    tooltip: {
-      theme: theme.palette.mode === 'dark' ? 'dark' : 'light',
-      fillSeriesColor: false,
-    },
-    stroke: {
-      show: false,
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    legend: {
-      show: false,
-    },
-    responsive: [
-      {
-        breakpoint: 991,
-        options: {
-          chart: {
-            width: 120,
-          },
-        },
-      },
-    ],
-  };
-
+  // const optionscolumnchart: any = {
+  //   chart: {
+  //     type: 'donut',
+  //     fontFamily: "'Plus Jakarta Sans', sans-serif;",
+  //     foreColor: '#adb0bb',
+  //     toolbar: {
+  //       show: false,
+  //     },
+  //     height: 155,
+  //   },
+  //   colors: [primary, primarylight, '#F9F9FD'],
+  //   plotOptions: {
+  //     pie: {
+  //       startAngle: 0,
+  //       endAngle: 360,
+  //       donut: {
+  //         size: '75%',
+  //         background: 'transparent',
+  //       },
+  //     },
+  //   },
+  //   tooltip: {
+  //     theme: theme.palette.mode === 'dark' ? 'dark' : 'light',
+  //     fillSeriesColor: false,
+  //   },
+  //   stroke: {
+  //     show: false,
+  //   },
+  //   dataLabels: {
+  //     enabled: false,
+  //   },
+  //   legend: {
+  //     show: false,
+  //   },
+  //   responsive: [
+  //     {
+  //       breakpoint: 991,
+  //       options: {
+  //         chart: {
+  //           width: 120,
+  //         },
+  //       },
+  //     },
+  //   ],
+  // };
   {/* TODO: Tune the chart based on ratio for each currency */ }
-  const seriescolumnchart: any = [38, 40, 25];
+  // const seriescolumnchart: any = [38, 40, 25];
 
   return (
-    <DashboardCard title="My Portfolio $">
-      <Grid container spacing={3}>
+    <DashboardCard>
+      <Grid container direction={"row"} justifyContent={"flex-start"} alignItems={"flex-start"} spacing={3}>
         {/* column */}
-        <Grid item xs={12} lg={8}>
-          <Typography variant="h4" fontWeight="700">
-            $36,358 (HKD) {/* TODO: Call api to get the balance and currency type */}
-          </Typography>
+        <Grid item xs={12} lg={12}>
 
-          <Grid container xs={12} lg={4}>
+          <Stack direction="row" spacing={2}>
+            <Typography variant="h6" fontWeight="600">
+              Portfolio Balance
+            </Typography>
+            <Avatar
+              sx={{
+                backgroundColor: successlight,
+                color: primary,
+                width: 30,
+                height: 30,
+                position: 'relative',
+                bottom: 10,
+              }}
+
+            >
+              <IconArrowUpLeft />
+            </Avatar>
+          </Stack>
+
+          <Stack direction="row" justifyContent="space-between" spacing={2}>
+            <Box>
+              <Typography variant="h4" fontWeight="700" justifyItems={"center"}>
+                ${portfolioBalance} {portfolioCurrency} {/* TODO: Call api to get the balance and currency type */}
+              </Typography>
+            </Box>
+
+            {/* Main Currency Button */}
+            <Button variant="outlined" color="primary">
+              Change Currency
+            </Button>
+          </Stack>
+
+          <Grid container
+            direction={"row"}
+            justifyContent={"flex-end"}
+            alignItems={"flex-end"}
+            xs={12} lg={12} spacing={1} mt={2}>
 
             {/* Deposite Button & Deposite Form */}
-            <Grid item xs={6} lg={12}>
+            <Grid item >
 
               <Button variant="outlined" color="primary" onClick={handleDepositFormClickOpen}>
                 Deposit
@@ -166,7 +208,7 @@ const PortfolioCard = () => {
             </Grid>
 
             {/* Transfer Button & Transfer Form */}
-            <Grid item xs={6} lg={12}>
+            <Grid item >
               <Button variant="outlined" color="primary" onClick={handleTransferFormClickOpen}>
                 Transfer
               </Button>
