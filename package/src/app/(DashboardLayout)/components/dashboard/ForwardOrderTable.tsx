@@ -50,10 +50,10 @@ const products = [
 ];
 
 
-const ProductPerformance = () => {
+const ForwardOrderTable = () => {
     return (
 
-        <DashboardCard title="Product Performance">
+        <DashboardCard title="Forward Order Table">
             <Box sx={{ overflow: 'auto', width: { xs: '280px', sm: 'auto' } }}>
                 <Table
                     aria-label="simple table"
@@ -66,27 +66,22 @@ const ProductPerformance = () => {
                         <TableRow>
                             <TableCell>
                                 <Typography variant="subtitle2" fontWeight={600}>
-                                    Id
+                                    Order ID
                                 </Typography>
                             </TableCell>
                             <TableCell>
                                 <Typography variant="subtitle2" fontWeight={600}>
-                                    Assigned
+                                    Currency Pair
                                 </Typography>
                             </TableCell>
                             <TableCell>
                                 <Typography variant="subtitle2" fontWeight={600}>
-                                    Name
+                                Status
                                 </Typography>
                             </TableCell>
                             <TableCell>
                                 <Typography variant="subtitle2" fontWeight={600}>
-                                    Priority
-                                </Typography>
-                            </TableCell>
-                            <TableCell align="right">
-                                <Typography variant="subtitle2" fontWeight={600}>
-                                    Budget
+                                Total Volume
                                 </Typography>
                             </TableCell>
                         </TableRow>
@@ -126,11 +121,11 @@ const ProductPerformance = () => {
                                         </Box>
                                     </Box>
                                 </TableCell>
-                                <TableCell>
+                                {/* <TableCell>
                                     <Typography color="textSecondary" variant="subtitle2" fontWeight={400}>
                                         {product.pname}
                                     </Typography>
-                                </TableCell>
+                                </TableCell> */}
                                 <TableCell>
                                     <Chip
                                         sx={{
@@ -142,7 +137,7 @@ const ProductPerformance = () => {
                                         label={product.priority}
                                     ></Chip>
                                 </TableCell>
-                                <TableCell align="right">
+                                <TableCell>
                                     <Typography variant="h6">${product.budget}k</Typography>
                                 </TableCell>
                             </TableRow>
@@ -154,4 +149,4 @@ const ProductPerformance = () => {
     );
 };
 
-export default ProductPerformance;
+export default ForwardOrderTable;

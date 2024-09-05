@@ -24,7 +24,7 @@ const Menuitems = [
   },
   {
     navlabel: true,
-    subheader: "Utilities",
+    subheader: "Trade",
   },
   {
     id: uniqueId(),
@@ -40,23 +40,37 @@ const Menuitems = [
   },
   {
     navlabel: true,
-    subheader: "Auth",
+    subheader: "User Account",
   },
+  
   {
     id: uniqueId(),
-    title: "Login",
+    title: "My Portfolio",
     icon: IconLogin,
-    href: "/authentication/login",
+    href: "/userAccount/myPortfolio",
   },
   {
     id: uniqueId(),
-    title: "Register",
-    icon: IconUserPlus,
-    href: "/authentication/register",
+    title: "Transactions",
+    icon: IconLogin,
+    href: "/userAccount/transactions",
   },
+  
+  // {
+  //   id: uniqueId(),
+  //   title: "Login",
+  //   icon: IconLogin,
+  //   href: "/authentication/login",
+  // },
+  // {
+  //   id: uniqueId(),
+  //   title: "Register",
+  //   icon: IconUserPlus,
+  //   href: "/authentication/register",
+  // },
   {
     navlabel: true,
-    subheader: "Extra",
+    subheader: "OTHERS",
   },
   {
     id: uniqueId(),
