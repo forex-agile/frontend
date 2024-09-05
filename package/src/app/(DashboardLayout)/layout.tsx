@@ -11,13 +11,16 @@ const MainWrapper = styled("div")(() => ({
   width: "100%",
 }));
 
+// Main Page Wrapper style
 const PageWrapper = styled("div")(() => ({
   display: "flex",
   flexGrow: 1,
   paddingBottom: "60px",
   flexDirection: "column",
   zIndex: 1,
-  backgroundColor: "transparent",
+  marginLeft: "0px",
+  padding: "0px",
+  backgroundColor: "black", //TODO: change Home background to different color
 }));
 
 interface Props {
@@ -57,13 +60,23 @@ export default function RootLayout({
         <Container
           sx={{
             paddingTop: "20px",
-            maxWidth: "1200px",
+            maxWidth: "1500px",
+            margin: 0,
+
+            '@media (min-width: 1200px)': {
+              maxWidth: '1500px',
+            },
+            '@media (min-width: 600px)': {
+              paddingLeft: '24px',
+              paddingRight: '24px',
+            },
+
           }}
         >
           {/* ------------------------------------------- */}
           {/* Page Route */}
           {/* ------------------------------------------- */}
-          <Box sx={{ minHeight: "calc(100vh - 170px)" }}>{children}</Box>
+          <Box sx={{ maxWidth: "1500px", margin: 0, minHeight: "calc(100vh - 170px)" }}>{children}</Box>
           {/* ------------------------------------------- */}
           {/* End Page */}
           {/* ------------------------------------------- */}

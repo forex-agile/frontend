@@ -25,7 +25,7 @@ const CreateOrderCard: React.FC = () => {
     };
 
     return (
-        <DashboardCard title='Create Trade Order'>
+        <DashboardCard title='Create Spot Trade Order'>
             <>
                 <Box mt={2}>
                     <Table>
@@ -39,9 +39,8 @@ const CreateOrderCard: React.FC = () => {
                         <TableBody>
                             <TableRow>
                                 <TableCell>
-                                    
                                     <Select value={fromCurrency} onChange={handleFromCurrencyChange}>
-                                        <TextField value={fromCurrency}/>
+                                        <TextField value={fromCurrency} />
                                         <MenuItem value=""><em>None</em></MenuItem>
                                         <MenuItem value="USD">USD</MenuItem>
                                         <MenuItem value="EUR">EUR</MenuItem>
@@ -62,8 +61,6 @@ const CreateOrderCard: React.FC = () => {
                             </TableRow>
                         </TableBody>
                     </Table>
-
-          
 
                 </Box>
                 <Button variant="contained" color="primary" onClick={handleSubmit}>
