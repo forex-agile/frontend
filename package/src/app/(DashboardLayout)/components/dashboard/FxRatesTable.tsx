@@ -79,6 +79,14 @@ const FxRatesTable: React.FC = () => {
                                     variant="outlined"
                                 />
                             </TableCell>
+                            <TableCell>
+                                <Chip
+                                    label={prices[pair]}
+                                    color="secondary"
+                                    variant="outlined"
+                                />
+                            </TableCell>
+
                         </TableRow>
                     ))}
                 </TableBody>
