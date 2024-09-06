@@ -10,13 +10,14 @@ import Blog from '@/app/(DashboardLayout)/components/dashboard/Blog';
 import MonthlyEarnings from '@/app/(DashboardLayout)/components/dashboard/MonthlyEarnings';
 import FxRatesTable from './components/dashboard/FxRatesTable';
 import CreateOrderCard from './components/dashboard/CreateOrderCard';
+import CreateForwardOrderCard from './components/dashboard/CreateForwardOrderCard';
 
 const Dashboard = () => {
   return (
     <PageContainer title="HomePage" description="This is a homepage">
-      <Box>
-        <Grid container spacing={2}>
-          <Grid container item spacing={2} lg={8}>
+      <Box margin={0}>
+        <Grid container justifyContent={"flex-start"} alignItems={"flex-start"} spacing={2} sx={{ margin: '0px' }}>
+          <Grid container item spacing={2} lg={7}>
             <Grid item xs={6} lg={12}>
               <FxRatesTable />
             </Grid>
@@ -25,18 +26,18 @@ const Dashboard = () => {
             </Grid>
           </Grid>
 
-          <Grid container item spacing={2} lg={4}>
-            <Grid  item xs={12} lg={12}>
+          <Grid container item spacing={2} lg={5}>
+            <Grid item xs={12} lg={12}>
               <PortfolioCard />
             </Grid>
-            <Grid item xs={"auto"} lg={12}>
+            <Grid item lg={12}>
               <CreateOrderCard />
             </Grid>
-            <Grid item xs={"auto"} lg={12}>
-              <CreateOrderCard />
+            <Grid item lg={12}>
+              <CreateForwardOrderCard />
             </Grid>
           </Grid>
-         
+
 
         </Grid>
       </Box>
