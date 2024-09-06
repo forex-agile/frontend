@@ -28,21 +28,21 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: "Typography",
+    title: "Make Spot Order",
     icon: IconTypography,
-    href: "/utilities/typography",
+    href: "/trade/makeOrder",
   },
   {
     id: uniqueId(),
-    title: "Shadow",
+    title: "Create contract",
     icon: IconCopy,
-    href: "/utilities/shadow",
+    href: "/trade/makeContract",
   },
   {
     navlabel: true,
     subheader: "User Account",
   },
-  
+
   {
     id: uniqueId(),
     title: "My Portfolio",
@@ -55,7 +55,7 @@ const Menuitems = [
     icon: IconLogin,
     href: "/userAccount/transactions",
   },
-  
+
   // {
   //   id: uniqueId(),
   //   title: "Login",

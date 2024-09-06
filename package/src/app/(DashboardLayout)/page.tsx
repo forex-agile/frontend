@@ -31,10 +31,10 @@ const Dashboard = () => {
               <PortfolioCard />
             </Grid>
             <Grid item lg={12}>
-              <CreateOrderCard />
+              {/* <CreateOrderCard /> */}
             </Grid>
             <Grid item lg={12}>
-              <CreateForwardOrderCard />
+              {/* <CreateForwardOrderCard /> */}
             </Grid>
           </Grid>
 
