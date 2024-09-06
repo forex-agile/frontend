@@ -12,6 +12,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
+// Context
+import { useCurrencyContext } from "../currency/CurrencyProvider";
 
 // Components
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
@@ -37,7 +39,10 @@ const PortfolioCard = () => {
   // Variables
   const [portfolioData, setPortfolioData] = React.useState({});
   const [portfolioBalance, setPortfolioBalance] = React.useState(16888);
-  const [portfolioCurrency, setPortfolioCurrency] = React.useState("HKD");
+  const { currency, setCurrency } = useCurrencyContext();
+
+
+  //
 
   // Submit deposite form data to backend by api
   const handleDepositeFormSubmit = () => {
@@ -56,53 +61,53 @@ const PortfolioCard = () => {
 
 
   // chart
-  // const optionscolumnchart: any = {
-  //   chart: {
-  //     type: 'donut',
-  //     fontFamily: "'Plus Jakarta Sans', sans-serif;",
-  //     foreColor: '#adb0bb',
-  //     toolbar: {
-  //       show: false,
-  //     },
-  //     height: 155,
-  //   },
-  //   colors: [primary, primarylight, '#F9F9FD'],
-  //   plotOptions: {
-  //     pie: {
-  //       startAngle: 0,
-  //       endAngle: 360,
-  //       donut: {
-  //         size: '75%',
-  //         background: 'transparent',
-  //       },
-  //     },
-  //   },
-  //   tooltip: {
-  //     theme: theme.palette.mode === 'dark' ? 'dark' : 'light',
-  //     fillSeriesColor: false,
-  //   },
-  //   stroke: {
-  //     show: false,
-  //   },
-  //   dataLabels: {
-  //     enabled: false,
-  //   },
-  //   legend: {
-  //     show: false,
-  //   },
-  //   responsive: [
-  //     {
-  //       breakpoint: 991,
-  //       options: {
-  //         chart: {
-  //           width: 120,
-  //         },
-  //       },
-  //     },
-  //   ],
-  // };
+  const optionscolumnchart: any = {
+    chart: {
+      type: 'donut',
+      fontFamily: "'Plus Jakarta Sans', sans-serif;",
+      foreColor: '#adb0bb',
+      toolbar: {
+        show: false,
+      },
+      height: 155,
+    },
+    colors: [primary, primarylight, '#F9F9FD'],
+    plotOptions: {
+      pie: {
+        startAngle: 0,
+        endAngle: 360,
+        donut: {
+          size: '75%',
+          background: 'transparent',
+        },
+      },
+    },
+    tooltip: {
+      theme: theme.palette.mode === 'dark' ? 'dark' : 'light',
+      fillSeriesColor: false,
+    },
+    stroke: {
+      show: false,
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    legend: {
+      show: false,
+    },
+    responsive: [
+      {
+        breakpoint: 991,
+        options: {
+          chart: {
+            width: 120,
+          },
+        },
+      },
+    ],
+  };
   {/* TODO: Tune the chart based on ratio for each currency */ }
-  // const seriescolumnchart: any = [38, 40, 25];
+  const seriescolumnchart: any = [38, 40, 25];
 
   return (
     <DashboardCard>
@@ -132,7 +137,7 @@ const PortfolioCard = () => {
           <Stack direction="row" justifyContent="space-between" spacing={2}>
             <Box>
               <Typography variant="h4" fontWeight="700" justifyItems={"center"}>
-                ${portfolioBalance} {portfolioCurrency} {/* TODO: Call api to get the balance and currency type */}
+                ${portfolioBalance} {currency} {/* TODO: Call api to get the balance and currency type */}
               </Typography>
             </Box>
 
@@ -271,14 +276,14 @@ const PortfolioCard = () => {
 
             </Grid>
           </Grid>
-          {/* <Grid item xs={5} sm={5}>
-                <Chart
-                  options={optionscolumnchart}
-                  series={seriescolumnchart}
-                  type="donut"
-                  height={200} width={"100%"}
-                />
-              </Grid>*/}
+          <Grid item xs={5} sm={5}>
+            <Chart
+              options={optionscolumnchart}
+              series={seriescolumnchart}
+              type="donut"
+              height={200} width={"100%"}
+            />
+          </Grid>
         </Grid>
       </Grid>
     </DashboardCard>

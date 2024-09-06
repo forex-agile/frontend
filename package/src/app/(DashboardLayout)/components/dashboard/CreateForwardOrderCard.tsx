@@ -3,6 +3,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import { Typography, Box, Table, TableHead, TableRow, TableCell, TableBody, Select, MenuItem, TextField, Button, Grid } from '@mui/material';
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
 
+import dayjs, { Dayjs } from 'dayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -29,6 +30,10 @@ const CreateForwardOrderCard: React.FC = () => {
         // Handle submit logic here
     };
 
+    //
+    const [value, setValue] = React.useState<Dayjs | null>(dayjs('2022-04-17T15:30'));
+
+
     return (
         <DashboardCard title='Create Forward Order'>
             <>
@@ -45,7 +50,6 @@ const CreateForwardOrderCard: React.FC = () => {
                         <TableBody>
                             <TableRow>
                                 <TableCell>
-
                                     <Select value={fromCurrency} onChange={handleFromCurrencyChange}>
                                         <TextField value={fromCurrency} />
                                         <MenuItem value=""><em>None</em></MenuItem>
@@ -67,9 +71,17 @@ const CreateForwardOrderCard: React.FC = () => {
                                 </TableCell>
                                 <TableCell>
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <DemoContainer components={['DatePicker']}>
-                                            <DatePicker label="Basic date picker" />
-                                        </DemoContainer>
+                                        {/* <DemoContainer components={['DateTimePicker', 'DateTimePicker']}>
+                                            <DateTimePicker
+                                                label="Uncontrolled picker"
+                                                defaultValue={dayjs('2022-04-17T15:30')}
+                                            />
+                                            <DateTimePicker
+                                                label="Controlled picker"
+                                                value={value}
+                                                onChange={(newValue) => setValue(newValue)}
+                                            />
+                                        </DemoContainer> */}
                                     </LocalizationProvider>
                                 </TableCell>
                             </TableRow>
