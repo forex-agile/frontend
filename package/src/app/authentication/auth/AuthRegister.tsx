@@ -11,12 +11,21 @@ interface registerType {
 }
 
 const AuthRegister = ({ title, subtitle, subtext }: registerType) => {
+
+    // Form data
+    const [username, setUsername] = useState<string>(''); 
     const [email, setEmail] = useState<string>('');
-    const [emailError, setEmailError] = useState<string | null>(null);
     const [password, setPassword] = useState<string>('');
+
+    // Error
+    const [emailError, setEmailError] = useState<string | null>(null);
     const [passwordError, setPasswordError] = useState<string | null>(null);
-    const [passwordVisible, setPasswordVisible] = useState(false);
     const [formError, setFormError] = useState<string | null>(null);
+
+    //Password Toggle
+    const [passwordVisible, setPasswordVisible] = useState(false);
+
+    // Success Message
     const [openDialog, setOpenDialog] = useState(false);
 
     const togglePasswordVisibility = () => {
@@ -26,6 +35,10 @@ const AuthRegister = ({ title, subtitle, subtext }: registerType) => {
     const validateEmail = (email: string): boolean => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
+    };
+
+    const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setUsername(e.target.value); // Update the username state
     };
 
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,7 +64,7 @@ const AuthRegister = ({ title, subtitle, subtext }: registerType) => {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
     
-        const baseURL = process.env.REACT_APP_API_BASE_URL;
+        const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
         const endpoint = "/api/v1/register";
         const url = `${baseURL}${endpoint}`;
     
@@ -61,18 +74,22 @@ const AuthRegister = ({ title, subtitle, subtext }: registerType) => {
             setFormError("Please ensure all fields are filled out correctly.");
         } else {
             setFormError(null);
-            const formData = { email: email, password: password };
-    
+            const formData = { username: username, email: email, password: password };
+            
+
             try {
-                // const response = await fetch(url, {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify(formData),
-                // });
+                console.log(formData)
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData),
+                });
+
     
-                // if (!response.ok) {
-                //     throw new Error('Network response was not ok');
-                // }
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
     
                 setOpenDialog(true); // Open the success dialog
     
@@ -103,7 +120,13 @@ const AuthRegister = ({ title, subtitle, subtext }: registerType) => {
                     <Typography variant="subtitle1" fontWeight={600} component="label" htmlFor='username' mb="5px">
                         Username
                     </Typography>
-                    <CustomTextField id="username" variant="outlined" fullWidth required />
+                    <CustomTextField 
+                        id="username" 
+                        variant="outlined" 
+                        fullWidth 
+                        required
+                        value={username}
+                        onChange={handleUsernameChange} />
 
                     <Typography variant="subtitle1" fontWeight={600} component="label" htmlFor='email' mb="5px" mt="25px">
                         Email
