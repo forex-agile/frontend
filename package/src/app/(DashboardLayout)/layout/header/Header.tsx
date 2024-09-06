@@ -1,19 +1,25 @@
 import React from 'react';
-import { Box, AppBar, Toolbar, styled, Stack, IconButton, Badge, Button } from '@mui/material';
+import { Box, AppBar, Toolbar, styled, Stack, IconButton, Badge, Button, Select, MenuItem } from '@mui/material';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
 // components
 import Profile from './Profile';
 import { IconBellRinging, IconMenu } from '@tabler/icons-react';
-
+import { useCurrencyContext } from '../../components/currency/CurrencyProvider';
+import { SelectChangeEvent } from '@mui/material';
 interface ItemType {
-  toggleMobileSidebar:  (event: React.MouseEvent<HTMLElement>) => void;
+  toggleMobileSidebar: (event: React.MouseEvent<HTMLElement>) => void;
 }
 
-const Header = ({toggleMobileSidebar}: ItemType) => {
+const Header = ({ toggleMobileSidebar }: ItemType) => {
 
   // const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   // const lgDown = useMediaQuery((theme) => theme.breakpoints.down('lg'));
+  const { currency, setCurrency } = useCurrencyContext();
+
+  const handleCurrencyChange = (event: SelectChangeEvent<string>) => {
+    setCurrency(event.target.value);
+  };
 
 
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
@@ -62,7 +68,13 @@ const Header = ({toggleMobileSidebar}: ItemType) => {
         </IconButton>
         <Box flexGrow={1} />
         <Stack spacing={1} direction="row" alignItems="center">
-          <Button variant="contained" component={Link} href="/authentication/login"   disableElevation color="primary" >
+          <Select value={currency} onChange={handleCurrencyChange}>
+            <MenuItem value="USD">USD</MenuItem>
+            <MenuItem value="EUR">EUR</MenuItem>
+            <MenuItem value="GBP">GBP</MenuItem>
+            {/* Add more currencies as needed */}
+          </Select>
+          <Button variant="contained" component={Link} href="/authentication/login" disableElevation color="primary" >
             Login
           </Button>
           <Profile />
