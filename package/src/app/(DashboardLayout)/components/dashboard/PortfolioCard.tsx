@@ -140,11 +140,6 @@ const PortfolioCard = () => {
                 ${portfolioBalance} {currency} {/* TODO: Call api to get the balance and currency type */}
               </Typography>
             </Box>
-
-            {/* Main Currency Button */}
-            <Button variant="outlined" color="primary">
-              Change Currency
-            </Button>
           </Stack>
 
           <Grid container
