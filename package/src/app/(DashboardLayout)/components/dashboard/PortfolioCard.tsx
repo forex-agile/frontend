@@ -49,7 +49,7 @@ const PortfolioCard = () => {
     // Call the update API to update the portfolio value
     fetch('/api/deposite', {
       method: 'POST',
-      body: JSON.stringify({ currency: 'USD', value: 100 }),
+      body: JSON.stringify({ currency, value }),
       headers: {
         'Content-Type': 'application/json'
       }
@@ -69,7 +69,7 @@ const PortfolioCard = () => {
   const handleTransferFormSubmit = (currency: string, value: number) => {
     fetch('/api/withdraw', {
       method: 'POST',
-      body: JSON.stringify({ currency: 'USD', value: 100 }),
+      body: JSON.stringify({ currency, value }),
       headers: {
         'Content-Type': 'application/json'
       }
