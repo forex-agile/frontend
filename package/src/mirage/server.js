@@ -9,7 +9,8 @@ export function makeServer({ environment = 'development' } = {}) {
         models: {
             portfoliocard: Model,
             assetsHolding: Model,
-            fxRate: Model,
+            baseFxRate: Model,
+            displayFxRate: Model,
         },
 
         seeds(server) {
@@ -25,21 +26,30 @@ export function makeServer({ environment = 'development' } = {}) {
             server.create('assetsHolding', { id: '8', currency: 'NZD', amount: 1000 });
 
             // Seed fx rate (Base currency is USD)
-            server.create('fxRate', { id: '1', currency: 'USD', rate: 1 });
-            server.create('fxRate', { id: '2', currency: 'EUR', rate: 0.90 });
-            server.create('fxRate', { id: '3', currency: 'GBP', rate: 0.76 });
-            server.create('fxRate', { id: '4', currency: 'JPY', rate: 142.23 });
-            server.create('fxRate', { id: '5', currency: 'HKD', rate: 7.79 });
-            server.create('fxRate', { id: '6', currency: 'CAD', rate: 1.35 });
-            server.create('fxRate', { id: '7', currency: 'AUD', rate: 1.49 });
-            server.create('fxRate', { id: '8', currency: 'NZD', rate: 1.62 });
+            server.create('baseFxRate', { id: '1', currency: 'USD', rate: 1 });
+            server.create('baseFxRate', { id: '2', currency: 'EUR', rate: 0.90 });
+            server.create('baseFxRate', { id: '3', currency: 'GBP', rate: 0.76 });
+            server.create('baseFxRate', { id: '4', currency: 'JPY', rate: 142.23 });
+            server.create('baseFxRate', { id: '5', currency: 'HKD', rate: 7.79 });
+            server.create('baseFxRate', { id: '6', currency: 'CAD', rate: 1.35 });
+            server.create('baseFxRate', { id: '7', currency: 'AUD', rate: 1.49 });
+            server.create('baseFxRate', { id: '8', currency: 'NZD', rate: 1.62 });
 
-            //  
+            // Seed fx rate (Display currency default is USD)
+            server.create('displayFxRate', { id: '1', currency: 'USD', rate: 1 });
+            server.create('displayFxRate', { id: '2', currency: 'EUR', rate: 0.90 });
+            server.create('displayFxRate', { id: '3', currency: 'GBP', rate: 0.76 });
+            server.create('displayFxRate', { id: '4', currency: 'JPY', rate: 142.23 });
+            server.create('displayFxRate', { id: '5', currency: 'HKD', rate: 7.79 });
+            server.create('displayFxRate', { id: '6', currency: 'CAD', rate: 1.35 });
+            server.create('displayFxRate', { id: '7', currency: 'AUD', rate: 1.49 });
+            server.create('displayFxRate', { id: '8', currency: 'NZD', rate: 1.62 });
+
 
             //ADD a new field to the assetsHolding model for the rate
             server.db.assetsHoldings.map((asset) => {
-                const fxRate = server.db.fxRates.findBy({ currency: asset.currency });
-                asset.rate = fxRate.rate;
+                const baseFxRate = server.db.baseFxRates.findBy({ currency: asset.currency });
+                asset.rate = baseFxRate.rate;
                 return asset;
             });
 
@@ -101,25 +111,32 @@ export function makeServer({ environment = 'development' } = {}) {
             // ==========================================================================================================
 
             // GET fx rate
-            this.get('/get/fxRates', (schema) => {
-                const fxRates = schema.fxRates.all();
-                return fxRates.models.map((fxRate) => fxRate.attrs);
+            this.get('/get/displayFxRates', (schema) => {
+                const displayFxRates = schema.displayFxRates.all();
+                return displayFxRates.models.map((displayFxRates) => displayFxRates.attrs);
             });
 
+            // POST fx rate when Base change by Header
+            // This route is to take the pass in currency, 
+            // use that currency as a base currency to calculate the fx rate for the rest of the currencies in displayFxRates
             this.post('/change/base-currency', (schema, request) => {
-                const { newBaseCurrency } = JSON.parse(request.requestBody);
-                const newBaseRate = schema.fxRates.findBy({ currency: newBaseCurrency }).rate;
+                const { currency } = JSON.parse(request.requestBody);
+                const baseFxRate = schema.baseFxRates.findBy({ currency });
 
-                schema.db.fxRates.update({ rate: 1 }, { rate: newBaseRate });
+                if (!baseFxRate) {
+                    return new Response(400, {}, { error: 'Base currency not found' });
+                }
 
-                schema.db.fxRates.map((fxRate) => {
-                    if (fxRate.currency !== newBaseCurrency) {
-                        fxRate.rate = fxRate.rate / newBaseRate;
-                    }
-                    return fxRate;
+                const baseRate = baseFxRate.rate;
+                const originalFxRates = schema.baseFxRates.all();
+
+                originalFxRates.models.forEach((originalFxRate) => {
+                    const newRate = originalFxRate.rate / baseRate;
+                    const displayFxRate = schema.displayFxRates.findBy({ currency: originalFxRate.currency });
+                    displayFxRate.update({ rate: newRate });
                 });
 
-                return schema.fxRates.all();
+                return schema.displayFxRates.all().models.map((displayFxRate) => displayFxRate.attrs);
             });
 
         },

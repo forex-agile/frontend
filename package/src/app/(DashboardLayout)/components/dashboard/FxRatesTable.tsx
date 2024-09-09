@@ -51,7 +51,7 @@ const FxRatesTable: React.FC = () => {
     ];
 
     const fetchData = async () => {
-        const response = await fetch('/api/get/fxRates');
+        const response = await fetch('/api/get/displayFxRates');
         const data = await response.json();
         console.log("Current rows:", data);
         const formattedData = data.map((item: FxRate) => ({
@@ -67,7 +67,7 @@ const FxRatesTable: React.FC = () => {
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [currency]);
 
     return (
         <DashboardCard title={`Fx Rates Table [  ${currency} ]`}>
