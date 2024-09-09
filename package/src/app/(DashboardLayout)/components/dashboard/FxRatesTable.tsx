@@ -7,92 +7,91 @@ import {
     TableCell,
     TableHead,
     TableRow,
-    Chip
+    Chip,
+    Button
 } from '@mui/material';
 import DashboardCard from '@/app/(DashboardLayout)//components/shared/DashboardCard';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { useCurrencyContext } from '../currency/CurrencyProvider';
 
 const FxRatesTable: React.FC = () => {
-    const [currencyPairs, setCurrencyPairs] = useState<string[]>([]);
-    const [prices, setPrices] = useState<{ [pair: string]: number }>({});
+
+    const [rows, setRows] = useState([]);
+    const { currency, setCurrency } = useCurrencyContext();
+
+    interface FxRate {
+        id: string;
+        currency: string;
+        rate: number;
+    }
+
+    const columns: GridColDef<(typeof rows)[number]>[] = [
+        {
+            field: 'id',
+            headerName: 'ID',
+            width: 90
+        },
+        {
+            field: 'CURRENCY',
+            headerName: 'Currency',
+            width: 100,
+        },
+        {
+            field: 'FX_RATE',
+            headerName: 'FX_RATE',
+            type: 'number',
+            width: 150,
+        },
+        // {
+        //     field: 'INVERSE_RATE',
+        //     headerName: 'INVERSE_RATE',
+        //     type: 'number',
+        //     width: 150,
+        // }
+    ];
+
+    const fetchData = async () => {
+        const response = await fetch('/api/get/fxRates');
+        const data = await response.json();
+        console.log("Current rows:", data);
+        const formattedData = data.map((item: FxRate) => ({
+            id: item.id,
+            CURRENCY: item.currency,
+            FX_RATE: item.rate,
+        }));
+
+        setRows(formattedData);
+
+
+    };
 
     useEffect(() => {
-        // Simulating real-time data updates
-        const interval = setInterval(() => {
-            // Fetch updated currency pairs and prices from an API
-            const updatedPairs = ['EUR/USD', 'GBP/USD', 'USD/JPY'];
-            const updatedPrices = {
-                'EUR/USD': 1.18,
-                'GBP/USD': 1.38,
-                'USD/JPY': 110.25,
-            };
-
-            setCurrencyPairs(updatedPairs);
-            setPrices(updatedPrices);
-        }, 500);
-
-        return () => {
-            clearInterval(interval);
-        };
+        fetchData();
     }, []);
 
     return (
-        <DashboardCard title="Fx Rates Table">
-        <Box sx={{ overflow: 'auto', width: { xs: '280px', sm: 'auto' } }}>
-            <Table
-                aria-label="simple table"
-                sx={{
-                    whiteSpace: "nowrap",
-                    mt: 2
-                }}
-            >
-                <TableHead>
-                    <TableRow>
-                        <TableCell>
-                            <Typography variant="subtitle2" fontWeight={600}>
-                                Currency Pair
-                            </Typography>
-                        </TableCell>
-                        <TableCell>
-                            <Typography variant="subtitle2" fontWeight={600}>
-                                Buy
-                            </Typography>
-                        </TableCell>
-                        <TableCell>
-                            <Typography variant="subtitle2" fontWeight={600}>
-                                Sell
-                            </Typography>
-                        </TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {currencyPairs.map((pair) => (
-                        <TableRow key={pair}>
-                            <TableCell>
-                                <Typography variant="subtitle2" fontWeight={600}>
-                                    {pair}
-                                </Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Chip
-                                    label={prices[pair]}
-                                    color="primary"
-                                    variant="outlined"
-                                />
-                            </TableCell>
-                            <TableCell>
-                                <Chip
-                                    label={prices[pair]}
-                                    color="secondary"
-                                    variant="outlined"
-                                />
-                            </TableCell>
-
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </Box>
-    </DashboardCard>
+        <DashboardCard title={`Fx Rates Table [  ${currency} ]`}>
+            <Box sx={{ overflow: 'auto', width: { xs: '280px', sm: 'auto' } }}>
+                <Button onClick={fetchData}>
+                    Refresh
+                </Button>
+                <Box sx={{ height: 380, width: '100%' }}>
+                    <DataGrid
+                        rows={rows}
+                        columns={columns}
+                        initialState={{
+                            pagination: {
+                                paginationModel: {
+                                    pageSize: 100,
+                                },
+                            },
+                        }}
+                        pageSizeOptions={[5]}
+                        disableRowSelectionOnClick
+                    />
+                </Box>
+            </Box>
+        </DashboardCard >
 
     );
 };

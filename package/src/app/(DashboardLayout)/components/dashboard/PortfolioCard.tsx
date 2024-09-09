@@ -19,6 +19,7 @@ import { useCurrencyContext } from "../currency/CurrencyProvider";
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
 import React, { use, useEffect } from "react";
 import { ST } from "next/dist/shared/lib/utils";
+import { set } from "lodash";
 
 const PortfolioCard = () => {
   // chart color
@@ -38,26 +39,61 @@ const PortfolioCard = () => {
 
   // Variables
   const [portfolioData, setPortfolioData] = React.useState({});
-  const [portfolioBalance, setPortfolioBalance] = React.useState(16888);
+  const [portfolioBalance, setPortfolioBalance] = React.useState(0);
   const { currency, setCurrency } = useCurrencyContext();
+  const [rerender, setRerender] = React.useState(false);
 
-
-  //
 
   // Submit deposite form data to backend by api
-  const handleDepositeFormSubmit = () => {
-
+  const handleDepositeFormSubmit = (currency: string, value: number) => {
+    // Call the update API to update the portfolio value
+    fetch('/api/deposite', {
+      method: 'POST',
+      body: JSON.stringify({ currency, value }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Trigger the re-render
+        setRerender(!rerender);
+      })
+      .catch(error => {
+        // Handle any errors that occur during the API call
+        console.error('There was a problem with the fetch operation:', error);
+      });
   }
 
-  // Submit transfer form data to backend by api
-  const handleTransferFormSubmit = () => {
-
+  // Submit withdraw form data to backend by api
+  const handleTransferFormSubmit = (currency: string, value: number) => {
+    fetch('/api/withdraw', {
+      method: 'POST',
+      body: JSON.stringify({ currency, value }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Trigger the re-render
+        setRerender(!rerender);
+      })
+      .catch(error => {
+        // Handle any errors that occur during the API call
+        console.error('There was a problem with the fetch operation:', error);
+      });
   }
 
   // Update the portfolio card with the latest data,
   useEffect(() => {
-
-  });
+    fetch('/api/portfolios')
+      .then(response => response.json())
+      .then(data => {
+        setPortfolioBalance(data.balance);
+        setPortfolioData(data.portfolio);
+      })
+  }, [rerender]);
 
 
   // chart
@@ -117,7 +153,7 @@ const PortfolioCard = () => {
 
           <Stack direction="row" spacing={2}>
             <Typography variant="h6" fontWeight="600">
-              Portfolio Balance
+              My Portfolio
             </Typography>
             <Avatar
               sx={{
@@ -140,11 +176,6 @@ const PortfolioCard = () => {
                 ${portfolioBalance} {currency} {/* TODO: Call api to get the balance and currency type */}
               </Typography>
             </Box>
-
-            {/* Main Currency Button */}
-            <Button variant="outlined" color="primary">
-              Change Currency
-            </Button>
           </Stack>
 
           <Grid container
@@ -166,13 +197,15 @@ const PortfolioCard = () => {
                   component: 'form',
                   onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
                     event.preventDefault();
-                    // const formData = new FormData(event.currentTarget);
-                    // const formJson = Object.fromEntries((formData as any).entries());
-                    // const email = formJson.email;
-                    // console.log(email);
+                    const formData = new FormData(event.currentTarget);
+                    const formJson = Object.fromEntries((formData as any).entries());
+                    const currency = formJson.Currency;
+                    const value = formJson.Value;
+                    handleDepositeFormSubmit(currency, value);
                     handleDepositeFormClose();
                   },
-                }}>
+                }}
+              >
                 <DialogTitle>Deposit Form</DialogTitle>
                 <DialogContent>
                   <DialogContentText mt={3}>
@@ -215,7 +248,7 @@ const PortfolioCard = () => {
             {/* Transfer Button & Transfer Form */}
             <Grid item >
               <Button variant="outlined" color="primary" onClick={handleTransferFormClickOpen}>
-                Transfer
+                Withdraw
               </Button>
               <Dialog
                 open={TransferFormOpen}
@@ -224,10 +257,11 @@ const PortfolioCard = () => {
                   component: 'form',
                   onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
                     event.preventDefault();
-                    // const formData = new FormData(event.currentTarget);
-                    // const formJson = Object.fromEntries((formData as any).entries());
-                    // const email = formJson.email;
-                    // console.log(email);
+                    const formData = new FormData(event.currentTarget);
+                    const formJson = Object.fromEntries((formData as any).entries());
+                    const currency = formJson.Currency;
+                    const value = formJson.Value;
+                    handleTransferFormSubmit(currency, value);
                     handleTransferFormClose();
                   },
                 }}>
@@ -235,7 +269,7 @@ const PortfolioCard = () => {
                           - Check if the currency is valid
                           - Check if the portfolio has enough money to transfer
                 */}
-                <DialogTitle>Transfer Form</DialogTitle>
+                <DialogTitle>Withdraw Form</DialogTitle>
                 <DialogContent>
                   <DialogContentText mt={3}>
                     Enter the following details to transfer money out from your account.
@@ -268,7 +302,7 @@ const PortfolioCard = () => {
                   </Grid>
                 </DialogContent>
                 <DialogActions>
-                  <Button type="submit">Transfer</Button>
+                  <Button type="submit">Withdraw</Button>
                   <Button onClick={handleTransferFormClose}>Cancel</Button>
                 </DialogActions>
 

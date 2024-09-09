@@ -17,6 +17,7 @@ export const useCurrencyContext = () => {
 
 export const CurrencyProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [currency, setCurrency] = useState<string>('USD'); // SETTING: Default currency
+    const [fx_rate, setFxRate] = useState<number>(1); // SETTING: Default fx rate
 
     return (
         <CurrencyContext.Provider value={{ currency, setCurrency }}>
