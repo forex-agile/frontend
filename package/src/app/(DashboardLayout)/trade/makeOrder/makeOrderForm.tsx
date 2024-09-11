@@ -238,7 +238,6 @@ const MakeOrderForm: React.FC = () => {
                     </Button>
                 </Grid>
 
-
                 <Grid container spacing={2} mt={2}>
                     {orderType === 'market' ? (
 
@@ -280,6 +279,7 @@ const MakeOrderForm: React.FC = () => {
                                     onChange={handleQuoteFxCurrencyCode}
                                     isOptionEqualToValue={(option, value) => option === value}
                                     renderInput={(params) => <TextField {...params} label="Settlement Currency" />}
+                                    filterOptions={(options, state) => options.filter(option => option !== baseFxCurrencyCode)} // Avoid selecting the same currency
                                 />
                             </Grid>
 
@@ -354,6 +354,7 @@ const MakeOrderForm: React.FC = () => {
                                     onChange={handleQuoteFxCurrencyCode}
                                     isOptionEqualToValue={(option, value) => option === value}
                                     renderInput={(params) => <TextField {...params} label="Settlement Currency" />}
+                                    filterOptions={(options, state) => options.filter(option => option !== baseFxCurrencyCode)} // Avoid selecting the same currency
                                 />
                             </Grid>
                             <Grid item>
