@@ -8,6 +8,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { get } from 'lodash';
 import { Button } from '@mui/material';
 import { useCurrencyContext } from '../../components/currency/CurrencyProvider';
+import PortfolioCard from '../../components/dashboard/PortfolioCard';
 
 
 
@@ -25,7 +26,7 @@ const AssestHolding = () => {
         {
             field: 'CURRENCY',
             headerName: 'Currency',
-            width: 150,
+            width: 100,
         },
         {
             field: 'AMOUNT',
@@ -33,12 +34,12 @@ const AssestHolding = () => {
             type: 'number',
             width: 150,
         },
-        // {
-        //     field: 'Value',
-        //     headerName: 'Market Value',
-        //     type: 'number',
-        //     width: 150,
-        // },
+        {
+            field: 'marketValue',
+            headerName: 'Market Value',
+            type: 'number',
+            width: 150,
+        },
         // {
         //     field: 'Change',
         //     headerName: 'Change',
@@ -62,60 +63,76 @@ const AssestHolding = () => {
     const [rerender, setRerender] = React.useState(false);
     const { currency, setCurrency } = useCurrencyContext();
 
+    // Asset Interface
     interface Asset {
         id: string;
         currency: string;
         amount: number;
+        marketValue: number;
     }
 
-    // Fetch the rows data row by row from the mock API
+    // API variable
+    const apiDomain = 'http://localhost:8080';
+    const user = localStorage.getItem('user');
+    const userId = get(JSON.parse(user || '{}'), 'id');
+    const parsedUser = user ? JSON.parse(user) : null;
+    const portfolioId = parsedUser && parsedUser.portfolio ? parsedUser.portfolio.id : null;
+
+
+    // Fetch the user's asset holdings
     const fetchData = async () => {
-        const response = await fetch('/api/assets');
+        const response = await fetch(`${apiDomain}/api/v1/portfolios/users/${userId}`);
         const data = await response.json();
-        console.log("Current rows:", data);
+        console.log("Rows data:", data.assets);
+
+        // Todo: Format the data to match the columns
         const formattedData = data.map((item: Asset) => ({
             id: item.id,
             CURRENCY: item.currency,
             AMOUNT: item.amount,
+
         }));
 
+        // Set the rows data
         setRows(formattedData);
-        setRerender(!rerender);
-
     };
 
 
     React.useEffect(() => {
         // Call the mock API to get user's asset holdings
         fetchData();
-    }, []);
+    }, [currency]);
 
     // Render the DataGrid once the rows are fetched
-
     return (
+        <>
 
-        <DashboardCard title={`Asset Holding in [  ${currency} ]`}>
-            <>
-                <Button onClick={fetchData}>
-                    Refresh
-                </Button>
-                <Box sx={{ height: 380, width: '100%' }}>
-                    <DataGrid
-                        rows={rows}
-                        columns={columns}
-                        initialState={{
-                            pagination: {
-                                paginationModel: {
-                                    pageSize: 100,
+            {/* Pass the calculated balance to the portfolioCard */}
+            <PortfolioCard PortfolioBalance={50} />
+
+            <DashboardCard title={`Asset Holding in [  ${currency} ]`}>
+                <>
+                    <Button onClick={fetchData}>
+                        Refresh
+                    </Button>
+                    <Box sx={{ height: 380, width: '100%' }}>
+                        <DataGrid
+                            rows={rows}
+                            columns={columns}
+                            initialState={{
+                                pagination: {
+                                    paginationModel: {
+                                        pageSize: 100,
+                                    },
                                 },
-                            },
-                        }}
-                        pageSizeOptions={[5]}
-                        disableRowSelectionOnClick
-                    />
-                </Box>
-            </>
-        </DashboardCard>
+                            }}
+                            pageSizeOptions={[5]}
+                            disableRowSelectionOnClick
+                        />
+                    </Box>
+                </>
+            </DashboardCard>
+        </>
     );
 }
 

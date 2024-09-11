@@ -16,9 +16,6 @@ const MyPortfolio = () => {
           <Grid container spacing={2}>
             <Grid container item spacing={2} lg={8}>
               <Grid item xs={6} lg={12}>
-                <PortfolioCard />
-              </Grid>
-              <Grid item xs={6} lg={12}>
                 <AssestHolding />
               </Grid>
             </Grid>
