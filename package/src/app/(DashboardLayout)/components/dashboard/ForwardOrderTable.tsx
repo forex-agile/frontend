@@ -55,6 +55,8 @@ const ForwardOrderTable = () => {
 
         <DashboardCard title="Forward Order Table">
             <Box sx={{ overflow: 'auto', width: { xs: '280px', sm: 'auto' } }}>
+
+
                 <Table
                     aria-label="simple table"
                     sx={{
@@ -76,12 +78,12 @@ const ForwardOrderTable = () => {
                             </TableCell>
                             <TableCell>
                                 <Typography variant="subtitle2" fontWeight={600}>
-                                Status
+                                    Status
                                 </Typography>
                             </TableCell>
                             <TableCell>
                                 <Typography variant="subtitle2" fontWeight={600}>
-                                Total Volume
+                                    Total Volume
                                 </Typography>
                             </TableCell>
                         </TableRow>
