@@ -45,7 +45,7 @@ const Login2 = () => {
               sx={{ p: 4, zIndex: 1, width: "100%", maxWidth: "500px" }}
             >
               <Box display="flex" alignItems="center" justifyContent="center">
-                <Logo />
+                <Logo />  {/* TODO: Remove Logo component to avoid */}
               </Box>
               <AuthLogin
                 subtext={

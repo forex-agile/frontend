@@ -17,18 +17,19 @@ const Dashboard = () => {
     <PageContainer title="HomePage" description="This is a homepage">
       <Box margin={0}>
         <Grid container justifyContent={"flex-start"} alignItems={"flex-start"} spacing={2} sx={{ margin: '0px' }}>
-          <Grid container item spacing={2} lg={7}>
-            <Grid item xs={6} lg={12}>
+          <Grid container item spacing={2}>
+            <Grid item xs={6} lg={7}>
               <FxRatesTable />
             </Grid>
-            <Grid item xs={6} lg={12}>
-              <ForwardOrderTable />
+            <Grid item xs={6} lg={5}>
+              <PortfolioCard />
+
             </Grid>
           </Grid>
 
-          <Grid container item spacing={2} lg={5}>
+          <Grid container item spacing={2}>
             <Grid item xs={12} lg={12}>
-              <PortfolioCard />
+              <ForwardOrderTable />
             </Grid>
             <Grid item lg={12}>
               {/* <CreateOrderCard /> */}

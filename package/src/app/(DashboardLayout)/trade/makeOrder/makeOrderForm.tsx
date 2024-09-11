@@ -1,37 +1,129 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { Typography, Box, Table, TableHead, TableRow, TableCell, TableBody, Select, MenuItem, TextField, Button, Grid } from '@mui/material';
+import { Typography, Box, Table, TableHead, TableRow, TableCell, TableBody, Select, MenuItem, TextField, Button, Grid, Stack, Autocomplete, Paper, PaperOwnProps, PaperProps, DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog } from '@mui/material';
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
 import { Widgets } from '@mui/icons-material';
 
+// Date Picker
+import dayjs, { Dayjs } from 'dayjs';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { CommonProps } from '@mui/material/OverridableComponent';
+
 const MakeOrderForm: React.FC = () => {
-    const [fromCurrency, setFromCurrency] = useState('');
-    const [toCurrency, setToCurrency] = useState('');
-    const [amount, setAmount] = useState('');
-    const [limitPrice, setLimitPrice] = useState('');
 
-    const handleLimitPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setLimitPrice(event.target.value);
+    // Variables for both Market and Limit order form 
+    const [orderType, setOrderType] = useState<'market' | 'limit'>('market'); // Default to Market order
+    const [orderSide, setOrderSide] = useState<'buy' | 'sell'>('buy');        // Default to Buy order
+    const [baseFxCurrencyCode, setBaseFxCurrencyCode] = useState('');
+    const [quoteFxCurrencyCode, setQuoteFxCurrencyCode] = useState('');
+    const [total, setTotal] = useState('');
+    const [expirationDate, setExpirationDate] = useState<Dayjs | null>(dayjs());
+    const [orderFxRate, setOrderFxRate] = useState('');                       //Only for display purposes, will not be sent to the backend
+
+    // Variables for only Limit order form
+    const [limit, setLimit] = useState('');
+
+
+    // TODO: Fetch the fx rate and user assets from the backend
+    // Fx Rate: An array of Currency code and rate (GET By API)
+    const [fxRate, setFxRate] = useState<{ currencyCode: string; rate: number; }[]>([{ currencyCode: 'USD', rate: 1.0 }, { currencyCode: 'EUR', rate: 0.85 }, { currencyCode: 'GBP', rate: 0.75 }, { currencyCode: 'JPY', rate: 110.0 }]);
+
+    // User Assets: An array of Currency code and amount (GET By API)
+    const [userAssets, setUserAssets] = useState<{ currencyCode: string; amount: number; }[]>([{ currencyCode: 'USD', amount: 1000 }, { currencyCode: 'EUR', amount: 500 }, { currencyCode: 'GBP', amount: 300 }, { currencyCode: 'JPY', amount: 10000 }]);
+
+    // Custom Paper component for the dropdown menu in currency selection
+    const CurrencyDropDownMenu: React.FC<PaperProps> = (props) => (
+        <Paper {...props} sx={{ maxHeight: 150 }} />
+    );
+
+    // Handlers for variables in both Market and Limit order form
+    const handleBaseFxCurrencyCode = (event: React.ChangeEvent<{}>, value: string | null) => {
+        setBaseFxCurrencyCode(value || '');
     };
 
-    const handleFromCurrencyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setFromCurrency(event.target.value);
+    const handleQuoteFxCurrencyCode = (event: React.SyntheticEvent<Element, Event>, value: string | null) => {
+        setQuoteFxCurrencyCode(value || '');
     };
 
-    const handleToCurrencyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setToCurrency(event.target.value);
+    const handleTotalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setTotal(event.target.value);
     };
 
-    const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setAmount(event.target.value);
+    const handleLimitChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setLimit(event.target.value);
     };
 
-    const handleSubmit = () => {
-        // Handle submit logic here
-    };
+    // const handleExpirationDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     setExpirationDate(event.target.value);
+    // };
 
-    const [orderType, setOrderType] = useState<'market' | 'limit'>('market');
 
+    // API Domain
+    const apiDomain = 'http://localhost:8080';
+
+    // TODO: Add authorization token in the header
+    // Handler for submitting the Market form
+    const handleMarketOrderSubmit = () => {
+        fetch(`${apiDomain}/api/v1/order/spot`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}` // Token should be stored in local storage when user logs in
+            },
+            body: JSON.stringify({
+                baseFxCurrencyCode: baseFxCurrencyCode,
+                quoteFxCurrencyCode: quoteFxCurrencyCode,
+                total: total,
+                orderType: orderType,
+                orderSide: orderSide,
+                expirationDate: expirationDate ? expirationDate.toISOString() : null //Convert current date to ISO 8601 format
+            })
+
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
+    }
+
+    // Handler for submitting the Limit form
+    const handleLimitOrderSubmit = () => {
+        fetch(`${apiDomain}/api/v1/order/spot`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}` // Token should be stored in local storage when user logs in
+            },
+            body: JSON.stringify({
+                baseFxCurrencyCode: baseFxCurrencyCode,
+                quoteFxCurrencyCode: quoteFxCurrencyCode,
+                total: total,
+                limit: limit,
+                orderType: orderType,
+                orderSide: orderSide,
+                expirationDate: expirationDate ? expirationDate.toISOString() : null //Convert current date to ISO 8601 format
+            })
+
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+
+
+    // Handlers for changing the order type and side via Market & Limit buttons
     const handleOrderTypeChange = (type: 'market' | 'limit') => {
         setOrderType(type);
     };
@@ -44,29 +136,96 @@ const MakeOrderForm: React.FC = () => {
         handleOrderTypeChange('limit');
     };
 
+    // Handlers for changing the order side via Buy & Sell buttons
+    const handleOrderSideChange = (side: 'buy' | 'sell') => {
+        setOrderSide(side);
+    };
+
+    const handleBuyOrderClick = () => {
+        handleOrderSideChange('buy');
+    };
+
+    const handleSellOrderClick = () => {
+        handleOrderSideChange('sell');
+    };
+
+    // Handler for changing the FX rate
+    const handleOrderFxRate = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setOrderFxRate(event.target.value);
+    };
+
+    // Calculate the fx rate when the base and quote currency changes
+    useEffect(() => {
+
+        // Get base currency code Fx rate
+
+        // Get quote currency code Fx rate
+
+        // Calculate the fx rate, by dividing the base currency code Fx rate by the quote currency code Fx rate
+
+        // Set the calculated fx rate to the orderFxRate state
+
+    }, [baseFxCurrencyCode, quoteFxCurrencyCode]);
+
+    // State for confirmation dialog
+    const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
+
+    // Handlers for confirmation dialog
+    const handleOpenConfirmationDialog = () => {
+        setOpenConfirmationDialog(true);
+    };
+
+    const handleCloseConfirmationDialog = () => {
+        setOpenConfirmationDialog(false);
+
+    };
+
     return (
         <DashboardCard title='Spot Order'>
             <>
-                <Button variant="outlined" onClick={handleMarketOrderClick} style={{ backgroundColor: orderType === 'market' ? 'black' : 'white', color: orderType === 'market' ? 'white' : 'black' }}>
-                    Market Order
-                </Button>
-                <Button variant="outlined" onClick={handleLimitOrderClick} style={{ backgroundColor: orderType === 'limit' ? 'black' : 'white', color: orderType === 'limit' ? 'white' : 'black' }}>
-                    Limit Order
-                </Button>
+                <Grid>
+                    <Button variant="outlined" onClick={handleMarketOrderClick} style={{ backgroundColor: orderType === 'market' ? 'black' : 'white', color: orderType === 'market' ? 'white' : 'black' }}>
+                        Market
+                    </Button>
+                    <Button variant="outlined" onClick={handleLimitOrderClick} style={{ backgroundColor: orderType === 'limit' ? 'black' : 'white', color: orderType === 'limit' ? 'white' : 'black' }}>
+                        Limit
+                    </Button>
+                </Grid>
 
+                <Grid mt={1}>
+                    <Button variant="outlined" onClick={handleBuyOrderClick} style={{ backgroundColor: orderSide === 'buy' ? 'black' : 'white', color: orderSide === 'buy' ? 'white' : 'black' }}>
+                        Buy
+                    </Button>
+                    <Button variant="outlined" onClick={handleSellOrderClick} style={{ backgroundColor: orderSide === 'sell' ? 'black' : 'white', color: orderSide === 'sell' ? 'white' : 'black' }}>
+                        Sell
+                    </Button>
+                </Grid>
+
+                {/* TODO: Dropdown menu for currency */}
                 <Grid container spacing={2} mt={2}>
                     {orderType === 'market' ? (
+
+                        // Market Order Form
                         <>
                             <Grid item>
-                                <Typography variant="subtitle1" sx={{ marginBottom: '1rem' }}>From Currency</Typography>
-                                <TextField value={fromCurrency} onChange={handleFromCurrencyChange} fullWidth />
+                                {/* <TextField
+                                    label={orderSide === 'buy' ? 'Buy Currency' : 'Sell Currency'}
+                                    value={baseFxCurrencyCode}
+                                    onChange={handleBaseFxCurrencyCode}
+                                    fullWidth placeholder='Quote Fx' /> */}
+                                <Autocomplete
+                                    disablePortal
+                                    options={fxRate.map((option) => option.currencyCode)}
+                                    sx={{ width: 150 }}
+                                    value={baseFxCurrencyCode}
+                                    onChange={handleBaseFxCurrencyCode}
+                                    isOptionEqualToValue={(option, value) => option === value}
+                                    renderInput={(params) => <TextField {...params} label={orderSide === 'buy' ? 'Buy Currency' : 'Sell Currency'} />}
+                                    PaperComponent={CurrencyDropDownMenu}
+                                />
                             </Grid>
+
                             <Grid item>
-                                <Typography variant="subtitle1" sx={{ marginBottom: '1rem' }}>To Currency</Typography>
-                                <TextField value={toCurrency} onChange={handleToCurrencyChange} fullWidth />
-                            </Grid>
-                            <Grid item>
-                                <Typography variant="subtitle1" sx={{ marginBottom: '1rem' }}>Amount</Typography>
                                 <TextField
                                     label="Amount"
                                     autoFocus
@@ -74,42 +233,173 @@ const MakeOrderForm: React.FC = () => {
                                     id="name"
                                     name="Currency"
                                     type="number"
-                                    value={amount}
-                                    placeholder="Amount"
-                                    onChange={handleAmountChange}
+                                    value={total}
+                                    placeholder="Total"
+                                    onChange={handleTotalChange}
                                     fullWidth
                                 />
                             </Grid>
+                            <Grid item>
+                                {/* <TextField
+                                    label="Settlement Currency"
+                                    value={quoteFxCurrencyCode}
+                                    onChange={handleQuoteFxCurrencyCode}
+                                    fullWidth placeholder="Base Fx" /> */}
+
+                                <Autocomplete
+                                    disablePortal
+                                    options={fxRate.map((option) => option.currencyCode)}
+                                    sx={{ width: 150 }}
+                                    value={quoteFxCurrencyCode}
+                                    onChange={handleQuoteFxCurrencyCode}
+                                    isOptionEqualToValue={(option, value) => option === value}
+                                    renderInput={(params) => <TextField {...params} label="Settlement Currency" />}
+                                />
+                            </Grid>
+
+                            <Grid item>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DateTimePicker
+                                        label="Expiry Date"
+                                        value={expirationDate}
+                                        onChange={(newDate) => setExpirationDate(newDate)}
+                                    />
+                                </LocalizationProvider>
+                            </Grid>
+
+                            <Grid item>
+                                <TextField
+                                    label="FX Rate"
+                                    value={orderFxRate}
+                                    type='number'
+                                    onChange={handleOrderFxRate} fullWidth />
+                            </Grid>
                         </>
                     ) : (
+                        // Limit Order Form
                         <>
                             <Grid item>
-                                <Typography variant="subtitle1" sx={{ marginBottom: '1rem' }}>From Currency</Typography>
-                                <TextField value={fromCurrency} onChange={handleFromCurrencyChange} fullWidth />
+                                {/* <TextField
+                                    label={orderSide === 'buy' ? 'Buy Currency' : 'Sell Currency'}
+                                    value={baseFxCurrencyCode}
+                                    onChange={handleBaseFxCurrencyCode}
+                                    fullWidth placeholder="Base Fx" /> */}
+                                <Autocomplete
+                                    disablePortal
+                                    options={fxRate.map((option) => option.currencyCode)}
+                                    sx={{ width: 150 }}
+                                    value={baseFxCurrencyCode}
+                                    onChange={handleBaseFxCurrencyCode}
+                                    isOptionEqualToValue={(option, value) => option === value}
+                                    renderInput={(params) => <TextField {...params} label={orderSide === 'buy' ? 'Buy Currency' : 'Sell Currency'} />}
+                                />
+                            </Grid>
+
+                            <Grid item>
+                                <TextField
+                                    label="Amount"
+                                    value={total}
+                                    type='number'
+                                    onChange={handleTotalChange}
+                                    fullWidth placeholder="Total" />
+                            </Grid>
+
+                            <Grid item>
+                                {/* <TextField
+                                    label="Settlement Currency"
+                                    value={quoteFxCurrencyCode}
+                                    onChange={handleQuoteFxCurrencyCode}
+                                    fullWidth placeholder="Quote Fx" /> */}
+                                <Autocomplete
+                                    disablePortal
+                                    options={fxRate.map((option) => option.currencyCode)}
+                                    sx={{ width: 150 }}
+                                    value={quoteFxCurrencyCode}
+                                    onChange={handleQuoteFxCurrencyCode}
+                                    isOptionEqualToValue={(option, value) => option === value}
+                                    renderInput={(params) => <TextField {...params} label="Settlement Currency" />}
+                                />
                             </Grid>
                             <Grid item>
-                                <Typography variant="subtitle1" sx={{ marginBottom: '1rem' }}>To Currency</Typography>
-                                <TextField value={toCurrency} onChange={handleToCurrencyChange} fullWidth />
+                                <TextField
+                                    label={orderSide === 'buy' ?
+                                        <>
+                                            <strong style={{ color: 'red' }}>Max </strong>
+                                            Settlement
+                                        </>
+                                        :
+                                        <strong style={{ color: 'red' }}>Min </strong>}
+                                    value={limit}
+                                    type='number'
+                                    onChange={handleLimitChange}
+                                    fullWidth placeholder="Limit" />
                             </Grid>
+
                             <Grid item>
-                                <Typography variant="subtitle1" sx={{ marginBottom: '1rem' }}>Amount</Typography>
-                                <TextField value={amount} onChange={handleAmountChange} fullWidth />
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DateTimePicker
+                                        label="Expiry Date"
+                                        value={expirationDate}
+                                        onChange={(newDate) => setExpirationDate(newDate)}
+                                    />
+                                </LocalizationProvider>
                             </Grid>
+
+                            {/* TODO: FX rates */}
                             <Grid item>
-                                <Typography variant="subtitle1" sx={{ marginBottom: '1rem' }}>Limit Price</Typography>
-                                <TextField value={limitPrice} onChange={handleLimitPriceChange} fullWidth />
+                                <TextField
+                                    label="FX Rate"
+                                    value={orderFxRate}
+                                    type='number'
+                                    onChange={handleOrderFxRate} fullWidth />
                             </Grid>
                         </>
                     )}
                 </Grid>
 
                 <Grid container justifyContent="flex-end" mt={2}>
-                    <Button variant="contained" color="primary" onClick={handleSubmit}>
+
+                    <Button variant="contained" onClick={handleOpenConfirmationDialog}>
                         Submit
                     </Button>
+                    <Dialog
+                        open={openConfirmationDialog}
+                        onClose={handleCloseConfirmationDialog}
+                    >
+                        <DialogTitle>Confirmation</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>
+                                Are you sure you want to submit the order?
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleCloseConfirmationDialog} color="primary">
+                                Cancel
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    orderType === 'market' ? handleMarketOrderSubmit() : handleLimitOrderSubmit();
+                                    handleCloseConfirmationDialog();
+
+                                    // Reset the form
+                                    setBaseFxCurrencyCode('');
+                                    setQuoteFxCurrencyCode('');
+                                    setTotal('');
+                                    setLimit('');
+                                    setExpirationDate(dayjs());
+                                    setOrderFxRate('');
+
+                                }}
+                                color="primary"
+                                autoFocus
+                            >
+                                <strong style={{ color: 'red' }}>Submit</strong>
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
                 </Grid>
             </>
-        </DashboardCard>
+        </DashboardCard >
     );
 }
 

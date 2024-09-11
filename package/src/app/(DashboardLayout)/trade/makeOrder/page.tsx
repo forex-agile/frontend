@@ -5,7 +5,7 @@ import PageContainer from '@/app/(DashboardLayout)/components/container/PageCont
 // components
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
 import MakeOrderForm from './makeOrderForm';
-import ForexTable from './forexTable';
+import FxRatesTable from '../../components/dashboard/FxRatesTable';
 
 const MyPortfolio = () => {
     return (
@@ -18,7 +18,7 @@ const MyPortfolio = () => {
                         </Grid>
 
                         <Grid item spacing={2} lg={8}>
-                            <ForexTable />
+                            <FxRatesTable />
                             <MakeOrderForm />
                         </Grid>
 
