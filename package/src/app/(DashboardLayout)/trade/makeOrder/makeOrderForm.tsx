@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { Typography, Box, Table, TableHead, TableRow, TableCell, TableBody, Select, MenuItem, TextField, Button, Grid, Stack, Autocomplete, Paper, PaperOwnProps, PaperProps } from '@mui/material';
+import { Typography, Box, Table, TableHead, TableRow, TableCell, TableBody, Select, MenuItem, TextField, Button, Grid, Stack, Autocomplete, Paper, PaperOwnProps, PaperProps, DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog } from '@mui/material';
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
 import { Widgets } from '@mui/icons-material';
 
@@ -167,6 +167,19 @@ const MakeOrderForm: React.FC = () => {
 
     }, [baseFxCurrencyCode, quoteFxCurrencyCode]);
 
+    // State for confirmation dialog
+    const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
+
+    // Handlers for confirmation dialog
+    const handleOpenConfirmationDialog = () => {
+        setOpenConfirmationDialog(true);
+    };
+
+    const handleCloseConfirmationDialog = () => {
+        setOpenConfirmationDialog(false);
+
+    };
+
     return (
         <DashboardCard title='Spot Order'>
             <>
@@ -206,6 +219,7 @@ const MakeOrderForm: React.FC = () => {
                                     sx={{ width: 150 }}
                                     value={baseFxCurrencyCode}
                                     onChange={handleBaseFxCurrencyCode}
+                                    isOptionEqualToValue={(option, value) => option === value}
                                     renderInput={(params) => <TextField {...params} label={orderSide === 'buy' ? 'Buy Currency' : 'Sell Currency'} />}
                                     PaperComponent={CurrencyDropDownMenu}
                                 />
@@ -238,6 +252,7 @@ const MakeOrderForm: React.FC = () => {
                                     sx={{ width: 150 }}
                                     value={quoteFxCurrencyCode}
                                     onChange={handleQuoteFxCurrencyCode}
+                                    isOptionEqualToValue={(option, value) => option === value}
                                     renderInput={(params) => <TextField {...params} label="Settlement Currency" />}
                                 />
                             </Grid>
@@ -275,6 +290,7 @@ const MakeOrderForm: React.FC = () => {
                                     sx={{ width: 150 }}
                                     value={baseFxCurrencyCode}
                                     onChange={handleBaseFxCurrencyCode}
+                                    isOptionEqualToValue={(option, value) => option === value}
                                     renderInput={(params) => <TextField {...params} label={orderSide === 'buy' ? 'Buy Currency' : 'Sell Currency'} />}
                                 />
                             </Grid>
@@ -300,6 +316,7 @@ const MakeOrderForm: React.FC = () => {
                                     sx={{ width: 150 }}
                                     value={quoteFxCurrencyCode}
                                     onChange={handleQuoteFxCurrencyCode}
+                                    isOptionEqualToValue={(option, value) => option === value}
                                     renderInput={(params) => <TextField {...params} label="Settlement Currency" />}
                                 />
                             </Grid>
@@ -341,13 +358,36 @@ const MakeOrderForm: React.FC = () => {
                 </Grid>
 
                 <Grid container justifyContent="flex-end" mt={2}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={orderType === 'market' ? handleMarketOrderSubmit : handleLimitOrderSubmit}
-                    >
+
+                    <Button variant="contained" onClick={handleOpenConfirmationDialog}>
                         Submit
                     </Button>
+                    <Dialog
+                        open={openConfirmationDialog}
+                        onClose={handleCloseConfirmationDialog}
+                    >
+                        <DialogTitle>Confirmation</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>
+                                Are you sure you want to submit the order?
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleCloseConfirmationDialog} color="primary">
+                                Cancel
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    orderType === 'market' ? handleMarketOrderSubmit() : handleLimitOrderSubmit();
+                                    handleCloseConfirmationDialog();
+                                }}
+                                color="primary"
+                                autoFocus
+                            >
+                                <strong style={{ color: 'red' }}>Submit</strong>
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
                 </Grid>
             </>
         </DashboardCard >
