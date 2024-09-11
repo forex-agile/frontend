@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, use } from 'react';
 
 interface CurrencyContextType {
     currency: string;
@@ -7,7 +7,7 @@ interface CurrencyContextType {
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
 
-export const useCurrencyContext = () => {
+const useCurrencyContext = () => {
     const context = useContext(CurrencyContext);
     if (!context) {
         throw new Error('useCurrencyContext must be used within a CurrencyProvider');
@@ -15,13 +15,37 @@ export const useCurrencyContext = () => {
     return context;
 };
 
-export const CurrencyProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [currency, setCurrency] = useState<string>('USD'); // SETTING: Default currency
-    const [fx_rate, setFxRate] = useState<number>(1); // SETTING: Default fx rate
+const CurrencyProvider = ({ children }: { children: ReactNode }) => {
+
+    const [currency, setCurrency] = useState<string>('USD'); // Default to 'USD' initially
+    const [isHydrated, setIsHydrated] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const savedCurrency = localStorage.getItem('currency');
+            if (savedCurrency) {
+                setCurrency(savedCurrency);
+            }
+            setIsHydrated(true);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (isHydrated) {
+            localStorage.setItem('currency', currency);
+        }
+    }, [currency, isHydrated]);
+
+    if (!isHydrated) {
+        return null; // Render nothing until hydration is complete
+    }
 
     return (
         <CurrencyContext.Provider value={{ currency, setCurrency }}>
             {children}
         </CurrencyContext.Provider>
     );
+
 };
+
+export { CurrencyProvider, useCurrencyContext };
