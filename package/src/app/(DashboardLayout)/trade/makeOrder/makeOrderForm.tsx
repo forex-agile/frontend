@@ -380,6 +380,15 @@ const MakeOrderForm: React.FC = () => {
                                 onClick={() => {
                                     orderType === 'market' ? handleMarketOrderSubmit() : handleLimitOrderSubmit();
                                     handleCloseConfirmationDialog();
+
+                                    // Reset the form
+                                    setBaseFxCurrencyCode('');
+                                    setQuoteFxCurrencyCode('');
+                                    setTotal('');
+                                    setLimit('');
+                                    setExpirationDate(dayjs());
+                                    setOrderFxRate('');
+
                                 }}
                                 color="primary"
                                 autoFocus
