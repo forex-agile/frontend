@@ -51,7 +51,7 @@ export function makeServer({ environment = 'development' } = {}) {
 
         // Define your routes
         routes() {
-            this.namespace = 'api';
+            this.namespace = 'apii';
 
             // ==========================================================================================================
 
