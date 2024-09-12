@@ -1,16 +1,9 @@
-import {
-    Typography, Box,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-    Chip
-} from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Typography, Box, Table, TableBody, TableCell, TableHead, TableRow, Chip } from '@mui/material';
 import DashboardCard from '@/app/(DashboardLayout)//components/shared/DashboardCard';
 
-// Example order data
-const orders = [
+// Define sample data to be displayed on error
+const sampleOrders = [
     {
         id: "1",
         order_side: "buy",
@@ -23,48 +16,41 @@ const orders = [
         total: 10000,
         residual: 2500,
         limit: 1.15,
-    },
-    {
-        id: "2",
-        order_side: "sell",
-        order_status: "cancelled",
-        order_type: "limit",
-        creation_date: "2024-08-20",
-        expiry_date: "2024-09-05",
-        fk_base_currency_code: "GBP",
-        fk_quote_currency_code: "USD",
-        total: 5000,
-        residual: 0,
-        limit: 1.35,
-    },
-    {
-        id: "3",
-        order_side: "buy",
-        order_status: "cleared",
-        order_type: "forward",
-        creation_date: "2024-08-15",
-        expiry_date: "2024-12-15",
-        fk_base_currency_code: "JPY",
-        fk_quote_currency_code: "USD",
-        total: 7500,
-        residual: 1000,
-        limit: 110.25,
     }
 ];
 
-const ForwardOrderTable = () => {
+const ForwardOrderTable: React.FC<{ portfolioId: string }> = ({ portfolioId }) => {
+    const [orders, setOrders] = useState<any[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchOrders = async () => {
+            try {
+                const response = await fetch(`/api/v1/orders/outstanding?portfolioId=${portfolioId}&orderStatus=active`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch orders');
+                }
+                const data = await response.json();
+                setOrders(data);
+            } catch (error) {
+                setError(error.message);
+                // Use sample data if there's an error
+                setOrders(sampleOrders);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchOrders();
+    }, [portfolioId]);
+
+    if (loading) return <Typography>Loading...</Typography>;
+
     return (
-        <DashboardCard title="Forward Order Table">
+        <DashboardCard title="Outstanding Orders">
             <Box sx={{ overflow: 'auto', width: { xs: '280px', sm: 'auto' } }}>
-
-
-                <Table
-                    aria-label="simple table"
-                    sx={{
-                        whiteSpace: "nowrap",
-                        mt: 2
-                    }}
-                >
+                <Table aria-label="simple table" sx={{ whiteSpace: "nowrap", mt: 2 }}>
                     <TableHead>
                         <TableRow>
                             <TableCell>
@@ -80,7 +66,6 @@ const ForwardOrderTable = () => {
                             <TableCell>
                                 <Typography variant="subtitle2" fontWeight={600}>
                                     Status
-                                    Status
                                 </Typography>
                             </TableCell>
                             <TableCell>
@@ -90,12 +75,16 @@ const ForwardOrderTable = () => {
                             </TableCell>
                             <TableCell>
                                 <Typography variant="subtitle2" fontWeight={600}>
-                                    Currency Pair
+                                    Base Currency
                                 </Typography>
                             </TableCell>
                             <TableCell>
                                 <Typography variant="subtitle2" fontWeight={600}>
-                                    Total Volume
+                                    Quote Currency
+                                </Typography>
+                            </TableCell>
+                            <TableCell>
+                                <Typography variant="subtitle2" fontWeight={600}>
                                     Total Volume
                                 </Typography>
                             </TableCell>
@@ -104,18 +93,23 @@ const ForwardOrderTable = () => {
                                     Residual Volume
                                 </Typography>
                             </TableCell>
+                            <TableCell>
+                                <Typography variant="subtitle2" fontWeight={600}>
+                                    Creation Date
+                                </Typography>
+                            </TableCell>
+                            <TableCell>
+                                <Typography variant="subtitle2" fontWeight={600}>
+                                    Expiry Date
+                                </Typography>
+                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {orders.map((order) => (
                             <TableRow key={order.id}>
                                 <TableCell>
-                                    <Typography
-                                        sx={{
-                                            fontSize: "15px",
-                                            fontWeight: "500",
-                                        }}
-                                    >
+                                    <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
                                         {order.id}
                                     </Typography>
                                 </TableCell>
@@ -142,7 +136,12 @@ const ForwardOrderTable = () => {
                                 </TableCell>
                                 <TableCell>
                                     <Typography variant="subtitle2" fontWeight={600}>
-                                        {order.fk_base_currency_code}/{order.fk_quote_currency_code}
+                                        {order.fk_base_currency_code}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Typography variant="subtitle2" fontWeight={600}>
+                                        {order.fk_quote_currency_code}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
@@ -150,6 +149,16 @@ const ForwardOrderTable = () => {
                                 </TableCell>
                                 <TableCell>
                                     <Typography variant="h6">{order.residual.toFixed(2)}</Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Typography variant="subtitle2" fontWeight={600}>
+                                        {order.creation_date}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Typography variant="subtitle2" fontWeight={600}>
+                                        {order.expiry_date}
+                                    </Typography>
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -179,4 +188,3 @@ const getStatusColor = (status) => {
 };
 
 export default ForwardOrderTable;
-
