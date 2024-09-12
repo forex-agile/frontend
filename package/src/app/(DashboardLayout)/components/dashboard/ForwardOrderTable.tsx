@@ -170,7 +170,7 @@ const ForwardOrderTable: React.FC<{ portfolioId: string }> = ({ portfolioId }) =
 };
 
 // Helper function to get status color
-const getStatusColor = (status) => {
+const getStatusColor = (status: string) => {
     switch (status) {
         case 'active':
             return 'primary.main';

@@ -40,7 +40,7 @@ const AuthLogin: React.FC<LoginType> = ({ title, subtitle, subtext }) => {
     const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
     const endpoint = "/api/v1/login";
     const url = `${baseURL}${endpoint}`;
-    
+
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -68,7 +68,7 @@ const AuthLogin: React.FC<LoginType> = ({ title, subtitle, subtext }) => {
         const userItem = localStorage.getItem('user');
 
         // Parse the JSON string back into an object
-        const userObject = JSON.parse(userItem);
+        const userObject = JSON.parse(userItem ?? "");
 
         // Access the portfolioId
         const portfolioId = userObject.portfolioId;
@@ -126,7 +126,7 @@ const AuthLogin: React.FC<LoginType> = ({ title, subtitle, subtext }) => {
               variant="outlined"
               fullWidth
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setUsername(e.target.value)}
             />
           </Box>
           <Box mt="25px">
@@ -144,7 +144,7 @@ const AuthLogin: React.FC<LoginType> = ({ title, subtitle, subtext }) => {
               variant="outlined"
               fullWidth
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setPassword(e.target.value)}
             />
           </Box>
         </Stack>

@@ -21,7 +21,7 @@ import React, { use, useEffect } from "react";
 import { ST } from "next/dist/shared/lib/utils";
 import { set } from "lodash";
 
-const PortfolioCard = () => {
+const PortfolioCard = (props: { PortfolioBalance?: number }) => {
   // chart color
   const theme = useTheme();
   const primary = theme.palette.primary.main;
@@ -39,19 +39,60 @@ const PortfolioCard = () => {
 
   // Variables
   const [portfolioData, setPortfolioData] = React.useState({});
-  const [portfolioBalance, setPortfolioBalance] = React.useState(0);
+  const [portfolioBalance, setPortfolioBalance] = React.useState(props.PortfolioBalance);
   const { currency, setCurrency } = useCurrencyContext();
   const [rerender, setRerender] = React.useState(false);
+
+  // API related variables
+  const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const user = localStorage.getItem('user');
+  const parsedUser = user ? JSON.parse(user) : null;
+  const portfolioId = parsedUser && parsedUser.portfolioId ? parsedUser.portfolioId : null;
 
 
   // Submit deposite form data to backend by api
   const handleDepositeFormSubmit = (currency: string, value: number) => {
-    // Call the update API to update the portfolio value
-    fetch('/api/deposite', {
+
+    // Call the update API to update the portfolio value (Mirage.js)
+    // fetch('/api/deposite', {
+    //   method: 'POST',
+    //   body: JSON.stringify({ currency, value }),
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   }
+    // })
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     // Trigger the re-render
+    //     setRerender(!rerender);
+    //   })
+    //   .catch(error => {
+    //     // Handle any errors that occur during the API call
+    //     console.error('There was a problem with the fetch operation:', error);
+    //   });
+
+    // Call the update API to update the portfolio value (BE)
+
+    // Get the portfolio ID from the user object
+    console.log("Calling API for fund-transfer [Deposit] from domain: ", baseURL);
+    console.log("User:", user);
+    console.log("Portfolio ID:", portfolioId);
+
+    fetch(`${baseURL}/api/v1/fund-transfer`, {
       method: 'POST',
-      body: JSON.stringify({ currency, value }),
+      body: JSON.stringify({
+        currency: {
+          currencyCode: currency // pass the currency code
+        },
+        amount: value,   // pass the amount
+        transferType: "DEPOSIT",
+        portfolio: {
+          id: portfolioId
+        }
+      }),
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
       }
     })
       .then(response => response.json())
@@ -67,11 +108,26 @@ const PortfolioCard = () => {
 
   // Submit withdraw form data to backend by api
   const handleTransferFormSubmit = (currency: string, value: number) => {
-    fetch('/api/withdraw', {
+
+    console.log("Calling API for fund-transfer [Withdrawal] from domain: ", baseURL);
+    console.log("User:", user);
+    console.log("Portfolio ID:", portfolioId);
+
+    fetch(`${baseURL}/api/v1/fund-transfer`, {
       method: 'POST',
-      body: JSON.stringify({ currency, value }),
+      body: JSON.stringify({
+        currency: {
+          currencyCode: currency // pass the currency code
+        },
+        amount: value,   // pass the amount
+        transferType: "WITHDRAWAL",
+        portfolio: {
+          id: portfolioId
+        }
+      }),
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
       }
     })
       .then(response => response.json())
@@ -85,15 +141,11 @@ const PortfolioCard = () => {
       });
   }
 
-  // Update the portfolio card with the latest data,
+  // Update the portfolio card with the latest balance calculated from the asset holdings
   useEffect(() => {
-    fetch('/api/portfolios')
-      .then(response => response.json())
-      .then(data => {
-        setPortfolioBalance(data.balance);
-        setPortfolioData(data.portfolio);
-      })
-  }, [rerender]);
+    setPortfolioBalance(props.PortfolioBalance);
+  }, [props.PortfolioBalance]);
+
 
 
   // chart

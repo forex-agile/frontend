@@ -50,14 +50,18 @@ const FxRatesTable: React.FC = () => {
         // }
     ];
 
+    // API variable
+    const apiDomain = 'http://localhost:8080';
+
+
     const fetchData = async () => {
-        const response = await fetch('/api/get/displayFxRates');
+        const response = await fetch('/api/v1/fx-rate');
         const data = await response.json();
         console.log("Current rows:", data);
-        const formattedData = data.map((item: FxRate) => ({
-            id: item.id,
-            CURRENCY: item.currency,
-            FX_RATE: item.rate,
+        const formattedData = data.map((item: any, index: number) => ({
+            id: index + 1,
+            CURRENCY: item.currency.currencyCode,
+            FX_RATE: item.rateToUSD,
         }));
 
         setRows(formattedData);

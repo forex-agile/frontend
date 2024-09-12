@@ -8,6 +8,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { get } from 'lodash';
 import { Button } from '@mui/material';
 import { useCurrencyContext } from '../../components/currency/CurrencyProvider';
+import PortfolioCard from '../../components/dashboard/PortfolioCard';
 
 
 
@@ -25,7 +26,7 @@ const AssestHolding = () => {
         {
             field: 'CURRENCY',
             headerName: 'Currency',
-            width: 150,
+            width: 100,
         },
         {
             field: 'AMOUNT',
@@ -33,12 +34,12 @@ const AssestHolding = () => {
             type: 'number',
             width: 150,
         },
-        // {
-        //     field: 'Value',
-        //     headerName: 'Market Value',
-        //     type: 'number',
-        //     width: 150,
-        // },
+        {
+            field: 'marketValue',
+            headerName: 'Market Value',
+            type: 'number',
+            width: 150,
+        },
         // {
         //     field: 'Change',
         //     headerName: 'Change',
@@ -62,60 +63,88 @@ const AssestHolding = () => {
     const [rerender, setRerender] = React.useState(false);
     const { currency, setCurrency } = useCurrencyContext();
 
+    // Asset Interface
     interface Asset {
+        balance: any;
         id: string;
-        currency: string;
+        currency: {
+            currencyCode: string;
+        };
         amount: number;
+        marketValue: number;
     }
 
-    // Fetch the rows data row by row from the mock API
+    // API related variables
+    const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const user = localStorage.getItem('user');
+    const parsedUser = user ? JSON.parse(user) : null;
+    const portfolioId = parsedUser && parsedUser.portfolioId ? parsedUser.portfolioId : null;
+    const userId = get(JSON.parse(user || '{}'), 'id');
+
+    // Fetch the user's asset holdings
     const fetchData = async () => {
-        const response = await fetch('/api/assets');
-        const data = await response.json();
-        console.log("Current rows:", data);
-        const formattedData = data.map((item: Asset) => ({
-            id: item.id,
-            CURRENCY: item.currency,
-            AMOUNT: item.amount,
+
+        console.log("Fetching data for user:", userId);
+        console.log("Portfolio ID:", portfolioId);
+        console.log("Authorization Token:", 'Bearer ' + localStorage.getItem('token'));
+
+        const response = await fetch(`${baseURL}/api/v1/portfolio/user/${userId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+        });
+        const responseData = await response.text();
+        const data = responseData ? JSON.parse(responseData) : [];
+        console.log("Rows data:", data.assets);
+
+        // Todo: Format the data to match the columns
+        const formattedData = data.assets.map((item: Asset, index: number) => ({
+            id: index + 1,
+            CURRENCY: item.currency.currencyCode,
+            AMOUNT: item.balance,
         }));
 
+        // Set the rows data
         setRows(formattedData);
-        setRerender(!rerender);
-
     };
 
 
+    // Fetch the data on load
     React.useEffect(() => {
-        // Call the mock API to get user's asset holdings
         fetchData();
-    }, []);
+    }, [currency]);
 
     // Render the DataGrid once the rows are fetched
-
     return (
+        <>
 
-        <DashboardCard title={`Asset Holding in [  ${currency} ]`}>
-            <>
-                <Button onClick={fetchData}>
-                    Refresh
-                </Button>
-                <Box sx={{ height: 380, width: '100%' }}>
-                    <DataGrid
-                        rows={rows}
-                        columns={columns}
-                        initialState={{
-                            pagination: {
-                                paginationModel: {
-                                    pageSize: 100,
+            {/* Pass the calculated balance to the portfolioCard */}
+            <PortfolioCard PortfolioBalance={50} />
+
+            <DashboardCard title={`Asset Holding in [  ${currency} ]`}>
+                <>
+                    <Button onClick={fetchData}>
+                        Refresh
+                    </Button>
+                    <Box sx={{ height: 380, width: '100%' }}>
+                        <DataGrid
+                            rows={rows}
+                            columns={columns}
+                            initialState={{
+                                pagination: {
+                                    paginationModel: {
+                                        pageSize: 100,
+                                    },
                                 },
-                            },
-                        }}
-                        pageSizeOptions={[5]}
-                        disableRowSelectionOnClick
-                    />
-                </Box>
-            </>
-        </DashboardCard>
+                            }}
+                            pageSizeOptions={[5]}
+                            disableRowSelectionOnClick
+                        />
+                    </Box>
+                </>
+            </DashboardCard>
+        </>
     );
 }
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { Typography, Box, Table, TableHead, TableRow, TableCell, TableBody, Select, MenuItem, TextField, Button, Grid, Stack, Autocomplete, Paper, PaperOwnProps, PaperProps, DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog } from '@mui/material';
+import { Typography, Box, Table, TableHead, TableRow, TableCell, TableBody, Select, MenuItem, TextField, Button, Grid, Stack, Autocomplete, Paper, PaperOwnProps, PaperProps, DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog, Snackbar, Alert } from '@mui/material';
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
 import { Widgets } from '@mui/icons-material';
 
@@ -20,11 +20,18 @@ const MakeOrderForm: React.FC = () => {
     const [baseFxCurrencyCode, setBaseFxCurrencyCode] = useState('');
     const [quoteFxCurrencyCode, setQuoteFxCurrencyCode] = useState('');
     const [total, setTotal] = useState('');
-    const [expirationDate, setExpirationDate] = useState<Dayjs | null>(dayjs());
+    const [expirationDate, setExpirationDate] = useState<Dayjs | null>();
     const [orderFxRate, setOrderFxRate] = useState('');                       //Only for display purposes, will not be sent to the backend
 
     // Variables for only Limit order form
     const [limit, setLimit] = useState('');
+
+    // Variables for Snackbar
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+
+
 
 
     // TODO: Fetch the fx rate and user assets from the backend
@@ -34,10 +41,14 @@ const MakeOrderForm: React.FC = () => {
     // User Assets: An array of Currency code and amount (GET By API)
     const [userAssets, setUserAssets] = useState<{ currencyCode: string; amount: number; }[]>([{ currencyCode: 'USD', amount: 1000 }, { currencyCode: 'EUR', amount: 500 }, { currencyCode: 'GBP', amount: 300 }, { currencyCode: 'JPY', amount: 10000 }]);
 
+
+
     // Custom Paper component for the dropdown menu in currency selection
     const CurrencyDropDownMenu: React.FC<PaperProps> = (props) => (
         <Paper {...props} sx={{ maxHeight: 150 }} />
     );
+
+
 
     // Handlers for variables in both Market and Limit order form
     const handleBaseFxCurrencyCode = (event: React.ChangeEvent<{}>, value: string | null) => {
@@ -59,6 +70,10 @@ const MakeOrderForm: React.FC = () => {
     // const handleExpirationDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     //     setExpirationDate(event.target.value);
     // };
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
+    };
 
 
     // API Domain
@@ -86,9 +101,15 @@ const MakeOrderForm: React.FC = () => {
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
+                setSnackbarMessage('Market order submitted successfully!');
+                setSnackbarSeverity('success');
+                setSnackbarOpen(true);
             })
             .catch((error) => {
                 console.error('Error:', error);
+                setSnackbarMessage('Failed to submit Market order.');
+                setSnackbarSeverity('error');
+                setSnackbarOpen(true);
             });
 
     }
@@ -115,9 +136,15 @@ const MakeOrderForm: React.FC = () => {
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
+                setSnackbarMessage('Limit order submitted successfully!');
+                setSnackbarSeverity('success');
+                setSnackbarOpen(true);
             })
             .catch((error) => {
                 console.error('Error:', error);
+                setSnackbarMessage('Failed to submit limit order.');
+                setSnackbarSeverity('error');
+                setSnackbarOpen(true);
             });
     }
 
@@ -154,6 +181,16 @@ const MakeOrderForm: React.FC = () => {
         setOrderFxRate(event.target.value);
     };
 
+    // Helper Function: Form reset
+    const resetForm = () => {
+        setBaseFxCurrencyCode('');
+        setQuoteFxCurrencyCode('');
+        setTotal('');
+        setLimit('');
+        setExpirationDate(null);
+        setOrderFxRate('');
+    };
+
     // Calculate the fx rate when the base and quote currency changes
     useEffect(() => {
 
@@ -184,10 +221,10 @@ const MakeOrderForm: React.FC = () => {
         <DashboardCard title='Spot Order'>
             <>
                 <Grid>
-                    <Button variant="outlined" onClick={handleMarketOrderClick} style={{ backgroundColor: orderType === 'market' ? 'black' : 'white', color: orderType === 'market' ? 'white' : 'black' }}>
+                    <Button variant="outlined" onClick={() => { handleMarketOrderClick(); resetForm(); }} style={{ backgroundColor: orderType === 'market' ? 'black' : 'white', color: orderType === 'market' ? 'white' : 'black' }}>
                         Market
                     </Button>
-                    <Button variant="outlined" onClick={handleLimitOrderClick} style={{ backgroundColor: orderType === 'limit' ? 'black' : 'white', color: orderType === 'limit' ? 'white' : 'black' }}>
+                    <Button variant="outlined" onClick={() => { handleLimitOrderClick(); resetForm(); }} style={{ backgroundColor: orderType === 'limit' ? 'black' : 'white', color: orderType === 'limit' ? 'white' : 'black' }}>
                         Limit
                     </Button>
                 </Grid>
@@ -201,18 +238,12 @@ const MakeOrderForm: React.FC = () => {
                     </Button>
                 </Grid>
 
-                {/* TODO: Dropdown menu for currency */}
                 <Grid container spacing={2} mt={2}>
                     {orderType === 'market' ? (
 
-                        // Market Order Form
+                        // Market Order Form (Conditional Rendering)
                         <>
                             <Grid item>
-                                {/* <TextField
-                                    label={orderSide === 'buy' ? 'Buy Currency' : 'Sell Currency'}
-                                    value={baseFxCurrencyCode}
-                                    onChange={handleBaseFxCurrencyCode}
-                                    fullWidth placeholder='Quote Fx' /> */}
                                 <Autocomplete
                                     disablePortal
                                     options={fxRate.map((option) => option.currencyCode)}
@@ -228,24 +259,18 @@ const MakeOrderForm: React.FC = () => {
                             <Grid item>
                                 <TextField
                                     label="Amount"
-                                    autoFocus
-                                    required
-                                    id="name"
-                                    name="Currency"
-                                    type="number"
                                     value={total}
-                                    placeholder="Total"
-                                    onChange={handleTotalChange}
-                                    fullWidth
+                                    type='number'
+                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                        const value = parseFloat(event.target.value);
+                                        if (!isNaN(value) && value >= 0) {  // Validation: Total should be a positive number
+                                            handleTotalChange(event);
+                                        }
+                                    }}
+                                    fullWidth placeholder="Total"
                                 />
                             </Grid>
                             <Grid item>
-                                {/* <TextField
-                                    label="Settlement Currency"
-                                    value={quoteFxCurrencyCode}
-                                    onChange={handleQuoteFxCurrencyCode}
-                                    fullWidth placeholder="Base Fx" /> */}
-
                                 <Autocomplete
                                     disablePortal
                                     options={fxRate.map((option) => option.currencyCode)}
@@ -254,6 +279,7 @@ const MakeOrderForm: React.FC = () => {
                                     onChange={handleQuoteFxCurrencyCode}
                                     isOptionEqualToValue={(option, value) => option === value}
                                     renderInput={(params) => <TextField {...params} label="Settlement Currency" />}
+                                    filterOptions={(options, state) => options.filter(option => option !== baseFxCurrencyCode)} // Avoid selecting the same currency
                                 />
                             </Grid>
 
@@ -262,7 +288,13 @@ const MakeOrderForm: React.FC = () => {
                                     <DateTimePicker
                                         label="Expiry Date"
                                         value={expirationDate}
-                                        onChange={(newDate) => setExpirationDate(newDate)}
+                                        onChange={(newDate) => {
+                                            // Check if the selected date is in the future
+                                            if (newDate && newDate.isAfter(dayjs())) {
+                                                setExpirationDate(newDate);
+                                            }
+                                        }}
+                                        disablePast  // Disable selection of past dates
                                     />
                                 </LocalizationProvider>
                             </Grid>
@@ -272,18 +304,22 @@ const MakeOrderForm: React.FC = () => {
                                     label="FX Rate"
                                     value={orderFxRate}
                                     type='number'
-                                    onChange={handleOrderFxRate} fullWidth />
+                                    onChange={
+                                        (event: React.ChangeEvent<HTMLInputElement>) => {
+                                            const value = parseFloat(event.target.value);
+                                            if (!isNaN(value) && value >= 0) {      // Validation: FX rate should be a positive number
+                                                handleOrderFxRate(event);
+                                            }
+                                        }
+                                    }
+                                    fullWidth />
                             </Grid>
                         </>
                     ) : (
-                        // Limit Order Form
+
+                        // Limit Order Form (Conditional Rendering)
                         <>
                             <Grid item>
-                                {/* <TextField
-                                    label={orderSide === 'buy' ? 'Buy Currency' : 'Sell Currency'}
-                                    value={baseFxCurrencyCode}
-                                    onChange={handleBaseFxCurrencyCode}
-                                    fullWidth placeholder="Base Fx" /> */}
                                 <Autocomplete
                                     disablePortal
                                     options={fxRate.map((option) => option.currencyCode)}
@@ -300,16 +336,16 @@ const MakeOrderForm: React.FC = () => {
                                     label="Amount"
                                     value={total}
                                     type='number'
-                                    onChange={handleTotalChange}
+                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                        const value = parseFloat(event.target.value);
+                                        if (!isNaN(value) && value >= 0) {  // Validation: Total should be a positive number
+                                            handleTotalChange(event);
+                                        }
+                                    }}
                                     fullWidth placeholder="Total" />
                             </Grid>
 
                             <Grid item>
-                                {/* <TextField
-                                    label="Settlement Currency"
-                                    value={quoteFxCurrencyCode}
-                                    onChange={handleQuoteFxCurrencyCode}
-                                    fullWidth placeholder="Quote Fx" /> */}
                                 <Autocomplete
                                     disablePortal
                                     options={fxRate.map((option) => option.currencyCode)}
@@ -318,6 +354,7 @@ const MakeOrderForm: React.FC = () => {
                                     onChange={handleQuoteFxCurrencyCode}
                                     isOptionEqualToValue={(option, value) => option === value}
                                     renderInput={(params) => <TextField {...params} label="Settlement Currency" />}
+                                    filterOptions={(options, state) => options.filter(option => option !== baseFxCurrencyCode)} // Avoid selecting the same currency
                                 />
                             </Grid>
                             <Grid item>
@@ -331,7 +368,12 @@ const MakeOrderForm: React.FC = () => {
                                         <strong style={{ color: 'red' }}>Min </strong>}
                                     value={limit}
                                     type='number'
-                                    onChange={handleLimitChange}
+                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                        const value = parseFloat(event.target.value);
+                                        if (!isNaN(value) && value >= 0) {   // Validation: Limit should be a positive number
+                                            handleLimitChange(event);
+                                        }
+                                    }}
                                     fullWidth placeholder="Limit" />
                             </Grid>
 
@@ -340,7 +382,13 @@ const MakeOrderForm: React.FC = () => {
                                     <DateTimePicker
                                         label="Expiry Date"
                                         value={expirationDate}
-                                        onChange={(newDate) => setExpirationDate(newDate)}
+                                        onChange={(newDate) => {
+                                            // Check if the selected date is in the future
+                                            if (newDate && newDate.isAfter(dayjs())) {
+                                                setExpirationDate(newDate);
+                                            }
+                                        }}
+                                        disablePast  // Disable selection of past dates
                                     />
                                 </LocalizationProvider>
                             </Grid>
@@ -356,6 +404,8 @@ const MakeOrderForm: React.FC = () => {
                         </>
                     )}
                 </Grid>
+
+
 
                 <Grid container justifyContent="flex-end" mt={2}>
 
@@ -380,15 +430,7 @@ const MakeOrderForm: React.FC = () => {
                                 onClick={() => {
                                     orderType === 'market' ? handleMarketOrderSubmit() : handleLimitOrderSubmit();
                                     handleCloseConfirmationDialog();
-
-                                    // Reset the form
-                                    setBaseFxCurrencyCode('');
-                                    setQuoteFxCurrencyCode('');
-                                    setTotal('');
-                                    setLimit('');
-                                    setExpirationDate(dayjs());
-                                    setOrderFxRate('');
-
+                                    resetForm();
                                 }}
                                 color="primary"
                                 autoFocus
@@ -398,6 +440,22 @@ const MakeOrderForm: React.FC = () => {
                         </DialogActions>
                     </Dialog>
                 </Grid>
+
+                <Snackbar
+                    open={snackbarOpen}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    autoHideDuration={60000}
+                    onClose={handleSnackbarClose}
+                >
+                    <Alert
+                        onClose={handleSnackbarClose}
+                        severity={'warning'}
+                        variant='filled'
+                        sx={{ width: '100%', fontSize: '0.9rem' }}
+                    >
+                        {snackbarMessage}
+                    </Alert>
+                </Snackbar>
             </>
         </DashboardCard >
     );
