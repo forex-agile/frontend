@@ -86,9 +86,7 @@ const AssestHolding = () => {
     // Fetch the user's asset holdings
     const fetchData = async () => {
 
-        console.log("Fetching data for user:", userId);
-        console.log("Portfolio ID:", portfolioId);
-        console.log("Authorization Token:", 'Bearer ' + localStorage.getItem('token'));
+        console.log("Fetching asset holding data for user id:", userId);
 
         const response = await fetch(`${baseURL}/api/v1/portfolio/user/${userId}`, {
             headers: {
@@ -117,9 +115,10 @@ const AssestHolding = () => {
         // Calculate the Portfolio Balance
         const portfolioBalance = formattedData.reduce((acc: number, item: any) => acc + item.marketValue, 0);
         setPortfolioBalance(portfolioBalance);
+
     };
 
-    // Helper function to get the current fx rate based on the chosen currency
+    // Helper function:  get the current fx rate and calculate new fx rate based on the chosen currency
     const getCurrentBasedFxRateTable = async (currency: string) => {
 
 

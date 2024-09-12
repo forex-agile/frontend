@@ -98,7 +98,7 @@ const ForwardOrderTable: React.FC = () => {
 
     return (
         <>
-            <DashboardCard>
+            <DashboardCard title='Outstanding Table'>
                 <>
                     <Table>
                         <TableHead>
