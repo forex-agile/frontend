@@ -5,9 +5,9 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { makeServer } from "../mirage/server";
 
 
-if (process.env.NODE_ENV === 'development') {
-  // makeServer();
-}
+// if (process.env.NODE_ENV === 'development') {
+//   makeServer();
+// }
 
 export default function RootLayout({
   children,

@@ -75,17 +75,17 @@ const AuthRegister = ({ title, subtitle, subtext }: registerType) => {
         } else {
             setFormError(null);
             const formData = { username: username, email: email, password: password };
-            
+            console.log("Form Data:", formData);
+
 
             try {
-                console.log(formData)
-
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData),
                 });
 
+                console.log("Response:", response);
     
                 if (!response.ok) {
                     throw new Error('Network response was not ok');

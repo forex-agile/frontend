@@ -25,6 +25,8 @@ const AuthLogin: React.FC<LoginType> = ({ title, subtitle, subtext }) => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log("User login");
+
     if (!username || !password) {
       setError("Username and password are required.");
       return;
@@ -48,15 +50,36 @@ const AuthLogin: React.FC<LoginType> = ({ title, subtitle, subtext }) => {
       console.log("Response:", response);
 
       if (response.ok) {
-        const token = await response.text();
-        console.log("Token:", token);
+        const data = await response.json();
+        const { user, token } = data;
 
-        // Save the token to local storage
+        // Save the token and userId to local storage
+        localStorage.setItem("user", JSON.stringify({
+          id: user.id,
+          username: user.username,
+          portfolioId: user.portfolioId,
+        }));
         localStorage.setItem("token", token);
+        // Check localStorage items
+        console.log("User:", localStorage.getItem("user"));
+        console.log("Token:", localStorage.getItem("token"));
 
+        // Get the user item from localStorage
+        const userItem = localStorage.getItem('user');
+
+        // Parse the JSON string back into an object
+        const userObject = JSON.parse(userItem);
+
+        // Access the portfolioId
+        const portfolioId = userObject.portfolioId;
+
+        console.log("Portfolio ID:", portfolioId);
+
+        // Redirect to the home page
         if (isMounted) {
           router.push("/");
         }
+
       } else {
         console.log("Response Status:", response.status);
         const errorMessage = await response.text();
@@ -76,6 +99,7 @@ const AuthLogin: React.FC<LoginType> = ({ title, subtitle, subtext }) => {
     }
   };
 
+  // TODO: Restrict access to home page
   return (
     <>
       {title && (
