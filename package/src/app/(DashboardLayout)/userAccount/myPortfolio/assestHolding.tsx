@@ -65,32 +65,44 @@ const AssestHolding = () => {
 
     // Asset Interface
     interface Asset {
+        balance: any;
         id: string;
-        currency: string;
+        currency: {
+            currencyCode: string;
+        };
         amount: number;
         marketValue: number;
     }
 
-    // API variable
-    const apiDomain = 'http://localhost:8080';
+    // API related variables
+    const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
     const user = localStorage.getItem('user');
-    const userId = get(JSON.parse(user || '{}'), 'id');
     const parsedUser = user ? JSON.parse(user) : null;
-    const portfolioId = parsedUser && parsedUser.portfolio ? parsedUser.portfolio.id : null;
-
+    const portfolioId = parsedUser && parsedUser.portfolioId ? parsedUser.portfolioId : null;
+    const userId = get(JSON.parse(user || '{}'), 'id');
 
     // Fetch the user's asset holdings
     const fetchData = async () => {
-        const response = await fetch(`${apiDomain}/api/v1/portfolios/users/${userId}`);
-        const data = await response.json();
+
+        console.log("Fetching data for user:", userId);
+        console.log("Portfolio ID:", portfolioId);
+        console.log("Authorization Token:", 'Bearer ' + localStorage.getItem('token'));
+
+        const response = await fetch(`${baseURL}/api/v1/portfolio/user/${userId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+        });
+        const responseData = await response.text();
+        const data = responseData ? JSON.parse(responseData) : [];
         console.log("Rows data:", data.assets);
 
         // Todo: Format the data to match the columns
-        const formattedData = data.map((item: Asset) => ({
-            id: item.id,
-            CURRENCY: item.currency,
-            AMOUNT: item.amount,
-
+        const formattedData = data.assets.map((item: Asset, index: number) => ({
+            id: index + 1,
+            CURRENCY: item.currency.currencyCode,
+            AMOUNT: item.balance,
         }));
 
         // Set the rows data
@@ -98,8 +110,8 @@ const AssestHolding = () => {
     };
 
 
+    // Fetch the data on load
     React.useEffect(() => {
-        // Call the mock API to get user's asset holdings
         fetchData();
     }, [currency]);
 

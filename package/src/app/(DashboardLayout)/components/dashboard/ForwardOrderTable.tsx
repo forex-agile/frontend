@@ -161,7 +161,7 @@ const ForwardOrderTable = () => {
 };
 
 // Helper function to get status color
-const getStatusColor = (status) => {
+const getStatusColor = (status: string) => {
     switch (status) {
         case 'active':
             return 'primary.main';

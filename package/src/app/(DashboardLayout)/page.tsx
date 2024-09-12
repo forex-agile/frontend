@@ -23,7 +23,6 @@ const Dashboard = () => {
             </Grid>
             <Grid item xs={6} lg={5}>
               <PortfolioCard />
-
             </Grid>
           </Grid>
 

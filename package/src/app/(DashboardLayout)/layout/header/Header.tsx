@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, AppBar, Toolbar, styled, Stack, IconButton, Badge, Button, Select, MenuItem } from '@mui/material';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
@@ -39,6 +39,12 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
       });
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    window.location.href = '/authentication/login';
+  };
+
   // TODO: Call api to get the possible currency options
   const currencyOptions = ['USD', 'EUR', 'GBP', 'JPY', 'HKD', 'CAD', 'AUD', 'NZD']; // Add more currencies as needed
 
@@ -56,6 +62,11 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
     width: '100%',
     color: theme.palette.text.secondary,
   }));
+
+  //  Check if the user is logged in, if localStorage is empty, the user is not logged in
+  const isLoggedIn = localStorage.getItem('user') ? true : false;
+
+
 
   return (
     <AppBarStyled position="sticky" color="default">
@@ -97,9 +108,15 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
             ))}
           </Select>
 
-          <Button variant="contained" component={Link} href="/authentication/login" disableElevation color="primary">
-            Login
-          </Button>
+          {isLoggedIn ? (
+            <Button variant="outlined" component={Link} href="" onClick={handleLogout} disableElevation color="primary">
+              Logout
+            </Button>
+          ) : (
+            <Button variant="contained" component={Link} href="/authentication/login" disableElevation color="primary">
+              Login
+            </Button>
+          )}
 
           <Profile />
         </Stack>

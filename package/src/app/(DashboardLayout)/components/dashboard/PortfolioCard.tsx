@@ -21,7 +21,7 @@ import React, { use, useEffect } from "react";
 import { ST } from "next/dist/shared/lib/utils";
 import { set } from "lodash";
 
-const PortfolioCard = (props: { PortfolioBalance: number }) => {
+const PortfolioCard = (props: { PortfolioBalance?: number }) => {
   // chart color
   const theme = useTheme();
   const primary = theme.palette.primary.main;
@@ -44,10 +44,10 @@ const PortfolioCard = (props: { PortfolioBalance: number }) => {
   const [rerender, setRerender] = React.useState(false);
 
   // API related variables
-  const apiDomain = 'http://localhost:8080';
+  const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const user = localStorage.getItem('user');
   const parsedUser = user ? JSON.parse(user) : null;
-  const portfolioId = parsedUser && parsedUser.portfolio ? parsedUser.portfolio.id : null;
+  const portfolioId = parsedUser && parsedUser.portfolioId ? parsedUser.portfolioId : null;
 
 
   // Submit deposite form data to backend by api
@@ -74,8 +74,11 @@ const PortfolioCard = (props: { PortfolioBalance: number }) => {
     // Call the update API to update the portfolio value (BE)
 
     // Get the portfolio ID from the user object
+    console.log("Calling API for fund-transfer [Deposit] from domain: ", baseURL);
+    console.log("User:", user);
+    console.log("Portfolio ID:", portfolioId);
 
-    fetch(`${apiDomain}/api/v1/fund-transfer`, {
+    fetch(`${baseURL}/api/v1/fund-transfer`, {
       method: 'POST',
       body: JSON.stringify({
         currency: {
@@ -105,14 +108,19 @@ const PortfolioCard = (props: { PortfolioBalance: number }) => {
 
   // Submit withdraw form data to backend by api
   const handleTransferFormSubmit = (currency: string, value: number) => {
-    fetch(`${apiDomain}/api/v1/fund-transfer`, {
+
+    console.log("Calling API for fund-transfer [Withdrawal] from domain: ", baseURL);
+    console.log("User:", user);
+    console.log("Portfolio ID:", portfolioId);
+
+    fetch(`${baseURL}/api/v1/fund-transfer`, {
       method: 'POST',
       body: JSON.stringify({
         currency: {
           currencyCode: currency // pass the currency code
         },
         amount: value,   // pass the amount
-        transferType: "Transfer",
+        transferType: "WITHDRAWAL",
         portfolio: {
           id: portfolioId
         }
