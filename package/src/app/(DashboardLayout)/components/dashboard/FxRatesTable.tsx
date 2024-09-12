@@ -42,27 +42,49 @@ const FxRatesTable: React.FC = () => {
             type: 'number',
             width: 150,
         },
-        // {
-        //     field: 'INVERSE_RATE',
-        //     headerName: 'INVERSE_RATE',
-        //     type: 'number',
-        //     width: 150,
-        // }
+        {
+            field: 'INVERSE_RATE',
+            headerName: 'INVERSE_RATE',
+            type: 'number',
+            width: 150,
+        }
     ];
 
-    // API variable
-    const apiDomain = 'http://localhost:8080';
+
+    // API related variables
+    const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const user = localStorage.getItem('user');
+    const parsedUser = user ? JSON.parse(user) : null;
+    const portfolioId = parsedUser && parsedUser.portfolioId ? parsedUser.portfolioId : null;
+
 
 
     const fetchData = async () => {
-        const response = await fetch('/api/v1/fx-rate');
+
+        console.log("Calling API for FxRatesTable from domain: ", baseURL);
+        console.log("User:", user);
+        console.log("Portfolio ID:", portfolioId);
+
+        const response = await fetch(`${baseURL}/api/v1/fx-rate`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+        });
+
         const data = await response.json();
         console.log("Current rows:", data);
+
         const formattedData = data.map((item: any, index: number) => ({
             id: index + 1,
             CURRENCY: item.currency.currencyCode,
             FX_RATE: item.rateToUSD,
+            INVERSE_RATE: 1 / item.rateToUSD, // Add a new column for inverse rate
         }));
+
+        console.log("Formatted data:", formattedData);
+
+        localStorage.setItem('fxRates', JSON.stringify(formattedData));
 
         setRows(formattedData);
 

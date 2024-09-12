@@ -98,16 +98,64 @@ const AssestHolding = () => {
         const data = responseData ? JSON.parse(responseData) : [];
         console.log("Rows data:", data.assets);
 
-        // Todo: Format the data to match the columns
+        const fxRate = await getCurrentBasedFxRateTable(currency);
+
         const formattedData = data.assets.map((item: Asset, index: number) => ({
             id: index + 1,
             CURRENCY: item.currency.currencyCode,
             AMOUNT: item.balance,
+
+            // Calculate the market value based on the new fx rate by mapping the currency to the new fx rate
+            marketValue: item.balance * fxRate.find((rate: any) => rate.CURRENCY === item.currency.currencyCode).FX_RATE,
         }));
 
         // Set the rows data
         setRows(formattedData);
     };
+
+    const getCurrentBasedFxRateTable = async (currency: string) => {
+
+
+        // Get the Base Currency fx rate
+        const response = await fetch(`${baseURL}/api/v1/fx-rate`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+        });
+
+        const data = await response.json();
+
+        const formattedData = data.map((item: any, index: number) => ({
+            id: index + 1,
+            CURRENCY: item.currency.currencyCode,
+            FX_RATE: item.rateToUSD,
+        }));
+
+
+
+        // Recalculate the fx rate based on the current chose currency, if the currency is not USD
+
+        // Get the fx rate for the chosen currency
+
+        const inversedNewBasefxRate = formattedData.find((item: any) => item.CURRENCY === currency).FX_RATE;
+
+        console.log("Current fx rate for ", currency, "is:", inversedNewBasefxRate);
+
+        // Mulitply the old base fx rate table (formattedData) by the inverse of the new base fx rate
+        const newFxRateTable = formattedData.map((item: any) => ({
+            ...item,
+            FX_RATE: item.FX_RATE / inversedNewBasefxRate,
+        }));
+
+
+
+        return newFxRateTable;
+
+
+    };
+
+
 
 
     // Fetch the data on load
