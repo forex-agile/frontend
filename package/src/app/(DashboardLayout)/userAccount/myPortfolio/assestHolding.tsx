@@ -62,6 +62,8 @@ const AssestHolding = () => {
     const [rows, setRows] = React.useState([]);
     const [rerender, setRerender] = React.useState(false);
     const { currency, setCurrency } = useCurrencyContext();
+    const [portfolioBalance, setPortfolioBalance] = React.useState<number>(0);
+
 
     // Asset Interface
     interface Asset {
@@ -111,8 +113,13 @@ const AssestHolding = () => {
 
         // Set the rows data
         setRows(formattedData);
+
+        // Calculate the Portfolio Balance
+        const portfolioBalance = formattedData.reduce((acc: number, item: any) => acc + item.marketValue, 0);
+        setPortfolioBalance(portfolioBalance);
     };
 
+    // Helper function to get the current fx rate based on the chosen currency
     const getCurrentBasedFxRateTable = async (currency: string) => {
 
 
@@ -168,7 +175,7 @@ const AssestHolding = () => {
         <>
 
             {/* Pass the calculated balance to the portfolioCard */}
-            <PortfolioCard PortfolioBalance={50} />
+            <PortfolioCard PortfolioBalance={Math.round(portfolioBalance * 1000) / 1000} />
 
             <DashboardCard title={`Asset Holding in [  ${currency} ]`}>
                 <>
