@@ -62,6 +62,8 @@ const AssestHolding = () => {
     const [rows, setRows] = React.useState([]);
     const [rerender, setRerender] = React.useState(false);
     const { currency, setCurrency } = useCurrencyContext();
+    const [portfolioBalance, setPortfolioBalance] = React.useState<number>(0);
+
 
     // Asset Interface
     interface Asset {
@@ -84,9 +86,7 @@ const AssestHolding = () => {
     // Fetch the user's asset holdings
     const fetchData = async () => {
 
-        console.log("Fetching data for user:", userId);
-        console.log("Portfolio ID:", portfolioId);
-        console.log("Authorization Token:", 'Bearer ' + localStorage.getItem('token'));
+        console.log("Fetching asset holding data for user id:", userId);
 
         const response = await fetch(`${baseURL}/api/v1/portfolio/user/${userId}`, {
             headers: {
@@ -111,8 +111,14 @@ const AssestHolding = () => {
 
         // Set the rows data
         setRows(formattedData);
+
+        // Calculate the Portfolio Balance
+        const portfolioBalance = formattedData.reduce((acc: number, item: any) => acc + item.marketValue, 0);
+        setPortfolioBalance(portfolioBalance);
+
     };
 
+    // Helper function:  get the current fx rate and calculate new fx rate based on the chosen currency
     const getCurrentBasedFxRateTable = async (currency: string) => {
 
 
@@ -168,7 +174,7 @@ const AssestHolding = () => {
         <>
 
             {/* Pass the calculated balance to the portfolioCard */}
-            <PortfolioCard PortfolioBalance={50} />
+            <PortfolioCard PortfolioBalance={Math.round(portfolioBalance * 1000) / 1000} />
 
             <DashboardCard title={`Asset Holding in [  ${currency} ]`}>
                 <>
