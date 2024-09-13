@@ -75,15 +75,24 @@ const FxRatesTable: React.FC = () => {
             id: index + 1,
             CURRENCY: item.currency.currencyCode,
             FX_RATE: item.rateToUSD,
-            INVERSE_RATE: 1 / item.rateToUSD, // Add a new column for inverse rate
+            INVERSE_RATE: 1 / item.rateToUSD,
         }));
 
+        // Check the current base currency, if it's not USD, convert the rates to the new base currency
+        if (currency !== 'USD') {
+
+
+            const inversedNewBasefxRate = formattedData.find((item: any) => item.CURRENCY === currency).FX_RATE;
+            console.log("Inversed New Base fx rate:", inversedNewBasefxRate);
+
+            formattedData.forEach((item: any) => {
+                item.FX_RATE = item.FX_RATE / inversedNewBasefxRate;
+                item.INVERSE_RATE = 1 / item.FX_RATE;
+            });
+        }
         console.log("Formatted data:", formattedData);
-
         localStorage.setItem('fxRates', JSON.stringify(formattedData));
-
         setRows(formattedData);
-
 
     };
 

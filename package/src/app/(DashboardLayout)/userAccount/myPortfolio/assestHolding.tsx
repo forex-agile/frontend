@@ -138,8 +138,6 @@ const AssestHolding = () => {
             FX_RATE: item.rateToUSD,
         }));
 
-
-
         // Recalculate the fx rate based on the current chose currency, if the currency is not USD
 
         // Get the fx rate for the chosen currency
@@ -154,11 +152,7 @@ const AssestHolding = () => {
             FX_RATE: item.FX_RATE / inversedNewBasefxRate,
         }));
 
-
-
         return newFxRateTable;
-
-
     };
 
 
