@@ -10,8 +10,8 @@ const sampleOrders = [
         orderType: "market",
         creationDate: "2024-09-06T00:00:00Z",
         expiryDate: "2024-09-10T00:00:00Z",
-        baseFx: "USD",
-        quoteFx: "EUR",
+        baseFx: { currencyCode: "USD" }, // Update the type of baseFx
+        quoteFx: { currencyCode: "EUR" }, // Update the type of quoteFx
         total: 10000,
         residual: 2500,
         limit: 1.15,
@@ -19,7 +19,7 @@ const sampleOrders = [
 ];
 
 const ForwardOrderTable: React.FC = () => {
-    const [orders, setOrders] = useState<{ id: string; orderSide: string; orderStatus: string; orderType: string; creationDate: string; expiryDate: string; baseFx: string; quoteFx: string; total: number; residual: number; limit: number; }[]>([]);
+    const [orders, setOrders] = useState<{ id: string; orderSide: string; orderStatus: string; orderType: string; creationDate: string; expiryDate: string; baseFx: { currencyCode: string }; quoteFx: { currencyCode: string }; total: number; residual: number; limit: number; }[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [openDialog, setOpenDialog] = useState(false);
@@ -51,6 +51,7 @@ const ForwardOrderTable: React.FC = () => {
                 }
                 const data = await response.json();
                 console.log("Data:", data);
+
                 setOrders(data);
             } catch (error) {
                 // setError(error.message);
@@ -98,7 +99,7 @@ const ForwardOrderTable: React.FC = () => {
 
     return (
         <>
-            <DashboardCard title='Outstanding Order Table'>
+            <DashboardCard>
                 <>
                     <Table>
                         <TableHead>
@@ -124,8 +125,8 @@ const ForwardOrderTable: React.FC = () => {
                                         <TableCell>{order.orderSide.charAt(0).toUpperCase() + order.orderSide.slice(1)}</TableCell>
                                         <TableCell>{order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1)}</TableCell>
                                         <TableCell>{order.orderType.charAt(0).toUpperCase() + order.orderType.slice(1)}</TableCell>
-                                        <TableCell>{order.baseFx}</TableCell>
-                                        <TableCell>{order.quoteFx}</TableCell>
+                                        <TableCell>{order.baseFx.currencyCode}</TableCell>
+                                        <TableCell>{order.quoteFx.currencyCode}</TableCell>
                                         <TableCell>{order.total.toFixed(2)}</TableCell>
                                         <TableCell>{order.residual.toFixed(2)}</TableCell>
                                         <TableCell>{new Date(order.creationDate).toLocaleString()}</TableCell>
