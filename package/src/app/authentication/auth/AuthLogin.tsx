@@ -59,6 +59,7 @@ const AuthLogin: React.FC<LoginType> = ({ title, subtitle, subtext }) => {
           username: user.username,
           portfolioId: user.portfolioId,
         }));
+        
         localStorage.setItem("token", token);
         // Check localStorage items
         console.log("User:", localStorage.getItem("user"));
