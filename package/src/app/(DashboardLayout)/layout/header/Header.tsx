@@ -21,22 +21,22 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
     setBaseCurrency(newCurrency);
     setCurrency(newCurrency);
 
-    // Call post method to pass the updated baseCurrency to the mock API
-    // replace 'YOUR_API_ENDPOINT' with the actual API endpoint
-    fetch('api/change/base-currency', {
-      method: 'POST',
-      body: JSON.stringify({ currency: newCurrency }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Success:', data.message);
-      })
-      .catch((error) => {
-        // Handle any errors
-      });
+    // // Call post method to pass the updated baseCurrency to the mock API
+    // // replace 'YOUR_API_ENDPOINT' with the actual API endpoint
+    // fetch('api/change/base-currency', {
+    //   method: 'POST',
+    //   body: JSON.stringify({ currency: newCurrency }),
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    // })
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     console.log('Success:', data.message);
+    //   })
+    //   .catch((error) => {
+    //     // Handle any errors
+    //   });
   };
 
   const handleLogout = () => {

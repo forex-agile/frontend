@@ -441,7 +441,7 @@ const PortfolioCard = (props: { PortfolioBalance?: number }) => {
           </Grid>
           <Grid item direction={"column"} lg={12} xs={12} sm={5} mt={5} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Typography variant="h6" color="textSecondary" sx={{ position: "relative", right: 50, bottom: 10 }}>
-              Currency Distribution In Market Value
+              Currency Distribution In Market Value in {currency}
             </Typography>
             <PieChart
               series={[
