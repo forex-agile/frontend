@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 
 import {
     Box,
-
     Button,
 
 } from '@mui/material';
@@ -123,6 +122,12 @@ const FxRatesTable: React.FC = () => {
                         slotProps={{
                             toolbar: {
                                 showQuickFilter: true,
+                                // sx: {
+                                //     border: '1px solid',
+                                //     padding: '10px',
+                                //     borderRadius: '5px',
+                                //     // Add more styles as needed
+                                // },
                             },
                         }}
                     />
