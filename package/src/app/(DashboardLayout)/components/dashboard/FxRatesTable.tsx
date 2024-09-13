@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-    Typography, Box,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-    Chip,
-    Button
+    Box,
+
+    Button,
+
 } from '@mui/material';
 import DashboardCard from '@/app/(DashboardLayout)//components/shared/DashboardCard';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import { useCurrencyContext } from '../currency/CurrencyProvider';
 
 const FxRatesTable: React.FC = () => {
@@ -98,9 +95,14 @@ const FxRatesTable: React.FC = () => {
     return (
         <DashboardCard title={`Fx Rates Table [  ${currency} ]`}>
             <Box sx={{ overflow: 'auto', width: { xs: '280px', sm: 'auto' } }}>
-                <Button onClick={fetchData}>
-                    Refresh
-                </Button>
+                <Box >
+                    <Box sx={{ marginBottom: '5px' }}>
+                        <Button onClick={fetchData}>
+                            <RefreshIcon sx={{ marginRight: '3px' }} />Refresh
+                        </Button>
+
+                    </Box>
+                </Box>
                 <Box sx={{ height: 380, width: '100%' }}>
                     <DataGrid
                         rows={rows}
@@ -114,6 +116,15 @@ const FxRatesTable: React.FC = () => {
                         }}
                         pageSizeOptions={[5]}
                         disableRowSelectionOnClick
+                        disableColumnFilter
+                        disableColumnSelector
+                        disableDensitySelector
+                        slots={{ toolbar: GridToolbar }}
+                        slotProps={{
+                            toolbar: {
+                                showQuickFilter: true,
+                            },
+                        }}
                     />
                 </Box>
             </Box>
