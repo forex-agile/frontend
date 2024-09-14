@@ -32,13 +32,13 @@ const AssestHolding = () => {
             field: 'AMOUNT',
             headerName: 'Amount',
             type: 'number',
-            width: 150,
+            width: 200,
         },
         {
             field: 'marketValue',
-            headerName: 'Market Value',
+            headerName: `Market Value in (${localStorage.getItem('currency')})`,
             type: 'number',
-            width: 150,
+            width: 200,
         },
         // {
         //     field: 'Change',
@@ -103,7 +103,7 @@ const AssestHolding = () => {
         const formattedData = data.assets.map((item: Asset, index: number) => ({
             id: index + 1,
             CURRENCY: item.currency.currencyCode,
-            AMOUNT: item.balance,
+            AMOUNT: item.balance.toLocaleString(),
 
             // Calculate the market value based on the new fx rate by mapping the currency to the new fx rate
             marketValue: item.balance * fxRate.find((rate: any) => rate.CURRENCY === item.currency.currencyCode).FX_RATE,
@@ -186,6 +186,7 @@ const AssestHolding = () => {
                                     },
                                 },
                             }}
+                            sx={{ fontSize: '16px' }}
                             pageSizeOptions={[5]}
                             disableRowSelectionOnClick
                         />
