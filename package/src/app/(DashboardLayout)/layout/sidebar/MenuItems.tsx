@@ -45,7 +45,7 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: "Transactions",
+    title: "Trade History",
     icon: IconLogin,
     href: "/userAccount/transactions",
   },
