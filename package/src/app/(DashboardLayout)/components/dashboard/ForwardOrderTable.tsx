@@ -194,8 +194,8 @@ const ForwardOrderTable: React.FC = () => {
                                             <TableCell>{order.orderType.charAt(0).toUpperCase() + order.orderType.slice(1)}</TableCell>
                                             <TableCell>{order.baseFx}</TableCell>
                                             <TableCell>{order.quoteFx}</TableCell>
-                                            <TableCell>{order.total.toFixed(2)}</TableCell>
-                                            <TableCell>{order.residual.toFixed(2)}</TableCell>
+                                            <TableCell>{order.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
+                                            <TableCell>{order.residual.toLocaleString()}</TableCell>
                                             <TableCell>{new Date(order.creationDate).toLocaleString()}</TableCell>
                                             <TableCell>{new Date(order.expiryDate).toLocaleString()}</TableCell>
                                             <TableCell>

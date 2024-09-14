@@ -308,7 +308,7 @@ const PortfolioCard = (props: { PortfolioBalance?: number }) => {
           <Grid item xs={12} lg={6}>
 
             <Typography variant="h4" fontWeight="700" justifyItems={"center"}>
-              ${portfolioBalance?.toFixed(3) ?? 0}  ({currency})
+              ${portfolioBalance?.toLocaleString() ?? 0} ({currency})
             </Typography>
           </Grid>
 
