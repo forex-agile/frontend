@@ -372,7 +372,7 @@ const MakeOrderForm: React.FC = () => {
                                 </LocalizationProvider>
                             </Grid>
 
-                            <Grid item>
+                            {/* <Grid item>
                                 <TextField
                                     label="FX Rate"
                                     value={orderFxRate}
@@ -386,7 +386,7 @@ const MakeOrderForm: React.FC = () => {
                                         }
                                     }
                                     fullWidth />
-                            </Grid>
+                            </Grid> */}
                         </>
                     ) : (
 
@@ -475,14 +475,14 @@ const MakeOrderForm: React.FC = () => {
                                 </LocalizationProvider>
                             </Grid>
 
-                            {/* TODO: FX rates */}
+                            {/* TODO: FX rates
                             <Grid item>
                                 <TextField
                                     label="FX Rate"
                                     value={orderFxRate}
                                     type='number'
                                     onChange={handleOrderFxRate} fullWidth />
-                            </Grid>
+                            </Grid> */}
                         </>
                     )}
                 </Grid>
