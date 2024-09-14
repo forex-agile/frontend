@@ -33,12 +33,6 @@ const Menuitems = [
     href: "/trade/makeOrder",
   },
   {
-    id: uniqueId(),
-    title: "Create contract",
-    icon: IconCopy,
-    href: "/trade/makeContract",
-  },
-  {
     navlabel: true,
     subheader: "User Account",
   },
@@ -68,22 +62,22 @@ const Menuitems = [
   //   icon: IconUserPlus,
   //   href: "/authentication/register",
   // },
-  {
-    navlabel: true,
-    subheader: "OTHERS",
-  },
-  {
-    id: uniqueId(),
-    title: "Icons",
-    icon: IconMoodHappy,
-    href: "/icons",
-  },
-  {
-    id: uniqueId(),
-    title: "Sample Page",
-    icon: IconAperture,
-    href: "/sample-page",
-  },
+  // {
+  //   navlabel: true,
+  //   subheader: "OTHERS",
+  // },
+  // {
+  //   id: uniqueId(),
+  //   title: "Icons",
+  //   icon: IconMoodHappy,
+  //   href: "/icons",
+  // },
+  // {
+  //   id: uniqueId(),
+  //   title: "Sample Page",
+  //   icon: IconAperture,
+  //   href: "/sample-page",
+  // },
 ];
 
 export default Menuitems;

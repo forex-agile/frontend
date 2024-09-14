@@ -112,8 +112,8 @@ const MakeOrderForm: React.FC = () => {
 
         console.log('Submitting Market Order');
         console.log('User Token', localStorage.getItem('token'));
-        console.log('Order Type:', orderType);
-        console.log('Order Side:', orderSide);
+        console.log('Order Type:', orderType.toUpperCase());
+        console.log('Order Side:', orderSide.toUpperCase);
         console.log('Base Currency:', baseFxCurrencyCode);
         console.log('Quote Currency:', quoteFxCurrencyCode);
         console.log('Total:', total);
@@ -126,33 +126,52 @@ const MakeOrderForm: React.FC = () => {
                 'Authorization': `Bearer ${localStorage.getItem('token')}` // Token should be stored in local storage when user logs in
             },
             body: JSON.stringify({
-                baseFxCurrencyCode: baseFxCurrencyCode.toUpperCase(),
-                quoteFxCurrencyCode: quoteFxCurrencyCode.toUpperCase(),
-                total: total,
                 orderType: orderType.toUpperCase(),
                 orderSide: orderSide.toUpperCase(),
-                expirationDate: expirationDate ? expirationDate.toISOString().replace(/\.\d+Z$/, '+00:00') : null //Convert current date to ISO 8601 format
+                baseFx: baseFxCurrencyCode.toUpperCase(),
+                quoteFx: quoteFxCurrencyCode.toUpperCase(),
+                total: total,
+                expiryDate: expirationDate ? expirationDate.toISOString().replace(/\.\d+Z$/, '+00:00') : null //Convert current date to ISO 8601 format
             })
 
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text(); // Use text() instead of json() to handle empty responses
+            })
+            .then(text => {
+                return text ? JSON.parse(text) : {}; // Parse JSON only if text is not empty
+            })
             .then(data => {
+                console.log('Order submitted successfully:', data);
                 console.log('Success:', data);
                 setSnackbarMessage('Market order submitted successfully!');
                 setSnackbarSeverity('success');
                 setSnackbarOpen(true);
+                // Handle successful response
             })
-            .catch((error) => {
-                console.error('Error:', error);
+            .catch(error => {
+                console.error('Error submitting order:', error);
+                // Handle error
                 setSnackbarMessage('Failed to submit Market order.');
                 setSnackbarSeverity('error');
                 setSnackbarOpen(true);
             });
-
     }
 
     // Handler for submitting the Limit form
     const handleLimitOrderSubmit = () => {
+        console.log('Submitting Market Order');
+        console.log('User Token', localStorage.getItem('token'));
+        console.log('Order Type:', orderType.toUpperCase());
+        console.log('Order Side:', orderSide.toUpperCase);
+        console.log('Base Currency:', baseFxCurrencyCode);
+        console.log('Quote Currency:', quoteFxCurrencyCode);
+        console.log('Total:', total);
+        console.log('Expiration Date:', expirationDate ? expirationDate.toISOString().replace(/\.\d+Z$/, '+00:00') : null);
+
         fetch(`${baseURL}/api/v1/order/spot`, {
             method: 'POST',
             headers: {
@@ -162,24 +181,35 @@ const MakeOrderForm: React.FC = () => {
             body: JSON.stringify({
                 orderType: orderType.toUpperCase(),
                 orderSide: orderSide.toUpperCase(),
-                baseFxCurrencyCode: baseFxCurrencyCode.toUpperCase(),
-                quoteFxCurrencyCode: quoteFxCurrencyCode.toUpperCase(),
+                baseFx: baseFxCurrencyCode.toUpperCase(),
+                quoteFx: quoteFxCurrencyCode.toUpperCase(),
                 total: total,
                 limit: limit,
-                expirationDate: expirationDate ? expirationDate.toISOString().replace(/\.\d+Z$/, '+00:00') : null //Convert current date to ISO 8601 format
+                expiryDate: expirationDate ? expirationDate.toISOString().replace(/\.\d+Z$/, '+00:00') : null //Convert current date to ISO 8601 format
             })
 
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text(); // Use text() instead of json() to handle empty responses
+            })
+            .then(text => {
+                return text ? JSON.parse(text) : {}; // Parse JSON only if text is not empty
+            })
             .then(data => {
+                console.log('Order submitted successfully:', data);
                 console.log('Success:', data);
-                setSnackbarMessage('Limit order submitted successfully!');
+                setSnackbarMessage('Market order submitted successfully!');
                 setSnackbarSeverity('success');
                 setSnackbarOpen(true);
+                // Handle successful response
             })
-            .catch((error) => {
-                console.error('Error:', error);
-                setSnackbarMessage('Failed to submit limit order.');
+            .catch(error => {
+                console.error('Error submitting order:', error);
+                // Handle error
+                setSnackbarMessage('Failed to submit Market order.');
                 setSnackbarSeverity('error');
                 setSnackbarOpen(true);
             });
