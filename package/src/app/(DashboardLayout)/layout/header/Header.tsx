@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, AppBar, Toolbar, styled, Stack, IconButton, Badge, Button, Select, MenuItem } from '@mui/material';
+import { Box, AppBar, Toolbar, styled, Stack, IconButton, Badge, Button, Select, MenuItem, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
 // components
@@ -15,6 +15,12 @@ interface ItemType {
 const Header = ({ toggleMobileSidebar }: ItemType) => {
   const { currency, setCurrency } = useCurrencyContext();
   const [baseCurrency, setBaseCurrency] = useState(currency);
+
+  const user = localStorage.getItem('user');
+  const parsedUser = user ? JSON.parse(user) : null;
+  const portfolioId = parsedUser && parsedUser.portfolioId ? parsedUser.portfolioId : null;
+  const userId = parsedUser && parsedUser.id ? parsedUser.id : null;
+  const userName = parsedUser && parsedUser.username ? parsedUser.username : null;
 
   const handleCurrencyChange = (event: SelectChangeEvent<string>) => {
     const newCurrency = event.target.value;
@@ -117,6 +123,9 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
               Login
             </Button>
           )}
+          <Typography variant='h6'>
+            Welcome, {userName}
+          </Typography>
 
           <Profile />
         </Stack>
