@@ -170,6 +170,7 @@ const MakeOrderForm: React.FC = () => {
         console.log('Base Currency:', baseFxCurrencyCode);
         console.log('Quote Currency:', quoteFxCurrencyCode);
         console.log('Total:', total);
+        console.log('Limit:', limit);
         console.log('Expiration Date:', expirationDate ? expirationDate.toISOString().replace(/\.\d+Z$/, '+00:00') : null);
 
         fetch(`${baseURL}/api/v1/order/spot`, {
@@ -207,7 +208,7 @@ const MakeOrderForm: React.FC = () => {
                 // Handle successful response
             })
             .catch(error => {
-                console.error('Error submitting order:', error);
+                console.error('Error submitting order:', error.message);
                 // Handle error
                 setSnackbarMessage('Failed to submit Market order.');
                 setSnackbarSeverity('error');
@@ -531,7 +532,7 @@ const MakeOrderForm: React.FC = () => {
                 >
                     <Alert
                         onClose={handleSnackbarClose}
-                        severity={'warning'}
+                        severity={snackbarSeverity}
                         variant='filled'
                         sx={{ width: '100%', fontSize: '0.9rem' }}
                     >
