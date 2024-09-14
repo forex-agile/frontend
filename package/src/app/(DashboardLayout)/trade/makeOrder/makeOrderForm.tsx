@@ -34,18 +34,45 @@ const MakeOrderForm: React.FC = () => {
 
 
 
-    // TODO: Fetch the fx rate and user assets from the backend
-    // Fx Rate: An array of Currency code and rate (GET By API)
-    const [fxRate, setFxRate] = useState<{ currencyCode: string; rate: number; }[]>([{ currencyCode: 'USD', rate: 1.0 }, { currencyCode: 'EUR', rate: 0.85 }, { currencyCode: 'GBP', rate: 0.75 }, { currencyCode: 'JPY', rate: 110.0 }]);
+
+    // Fx Rate: An array of Currency code
+    const [fxRate, setFxRate] = useState<{ currencyCode: string; currencyName: string }[]>([]);
 
     // User Assets: An array of Currency code and amount (GET By API)
     const [userAssets, setUserAssets] = useState<{ currencyCode: string; amount: number; }[]>([{ currencyCode: 'USD', amount: 1000 }, { currencyCode: 'EUR', amount: 500 }, { currencyCode: 'GBP', amount: 300 }, { currencyCode: 'JPY', amount: 10000 }]);
 
+    // Fetch the fx rate and user assets from the backend
+    useEffect(() => {
+        fetch(`${baseURL}/api/v1/currency`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}` //
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
 
+                // format the data to match the fxRate state
+                const formattedData = data.map((currency: { currencyCode: string; currencyName: string; }) => {
+                    return {
+                        currencyCode: currency.currencyCode,
+                        currencyName: currency.currencyName
+                    }
+                });
+
+                setFxRate(formattedData);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
+    }, []);
 
     // Custom Paper component for the dropdown menu in currency selection
     const CurrencyDropDownMenu: React.FC<PaperProps> = (props) => (
-        <Paper {...props} sx={{ maxHeight: 150 }} />
+        <Paper {...props} sx={{ maxHeight: 150, scrollbarWidth: 'none' }} />
     );
 
 
@@ -77,24 +104,34 @@ const MakeOrderForm: React.FC = () => {
 
 
     // API Domain
-    const apiDomain = 'http://localhost:8080';
+    const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
     // TODO: Add authorization token in the header
     // Handler for submitting the Market form
     const handleMarketOrderSubmit = () => {
-        fetch(`${apiDomain}/api/v1/order/spot`, {
+
+        console.log('Submitting Market Order');
+        console.log('User Token', localStorage.getItem('token'));
+        console.log('Order Type:', orderType);
+        console.log('Order Side:', orderSide);
+        console.log('Base Currency:', baseFxCurrencyCode);
+        console.log('Quote Currency:', quoteFxCurrencyCode);
+        console.log('Total:', total);
+        console.log('Expiration Date:', expirationDate ? expirationDate.toISOString().replace(/\.\d+Z$/, '+00:00') : null);
+
+        fetch(`${baseURL}/api/v1/order/spot`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}` // Token should be stored in local storage when user logs in
             },
             body: JSON.stringify({
-                baseFxCurrencyCode: baseFxCurrencyCode,
-                quoteFxCurrencyCode: quoteFxCurrencyCode,
+                baseFxCurrencyCode: baseFxCurrencyCode.toUpperCase(),
+                quoteFxCurrencyCode: quoteFxCurrencyCode.toUpperCase(),
                 total: total,
-                orderType: orderType,
-                orderSide: orderSide,
-                expirationDate: expirationDate ? expirationDate.toISOString() : null //Convert current date to ISO 8601 format
+                orderType: orderType.toUpperCase(),
+                orderSide: orderSide.toUpperCase(),
+                expirationDate: expirationDate ? expirationDate.toISOString().replace(/\.\d+Z$/, '+00:00') : null //Convert current date to ISO 8601 format
             })
 
         })
@@ -116,20 +153,20 @@ const MakeOrderForm: React.FC = () => {
 
     // Handler for submitting the Limit form
     const handleLimitOrderSubmit = () => {
-        fetch(`${apiDomain}/api/v1/order/spot`, {
+        fetch(`${baseURL}/api/v1/order/spot`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}` // Token should be stored in local storage when user logs in
             },
             body: JSON.stringify({
-                baseFxCurrencyCode: baseFxCurrencyCode,
-                quoteFxCurrencyCode: quoteFxCurrencyCode,
+                orderType: orderType.toUpperCase(),
+                orderSide: orderSide.toUpperCase(),
+                baseFxCurrencyCode: baseFxCurrencyCode.toUpperCase(),
+                quoteFxCurrencyCode: quoteFxCurrencyCode.toUpperCase(),
                 total: total,
                 limit: limit,
-                orderType: orderType,
-                orderSide: orderSide,
-                expirationDate: expirationDate ? expirationDate.toISOString() : null //Convert current date to ISO 8601 format
+                expirationDate: expirationDate ? expirationDate.toISOString().replace(/\.\d+Z$/, '+00:00') : null //Convert current date to ISO 8601 format
             })
 
         })
@@ -268,6 +305,7 @@ const MakeOrderForm: React.FC = () => {
                                         }
                                     }}
                                     fullWidth placeholder="Total"
+
                                 />
                             </Grid>
                             <Grid item>
@@ -278,8 +316,13 @@ const MakeOrderForm: React.FC = () => {
                                     value={quoteFxCurrencyCode}
                                     onChange={handleQuoteFxCurrencyCode}
                                     isOptionEqualToValue={(option, value) => option === value}
+                                    filterOptions={(options, { inputValue }) => {
+                                        // Filter out the base currency and return options that match the input
+                                        return options.filter(option => option !== baseFxCurrencyCode && option.toLowerCase().includes(inputValue.toLowerCase()));
+                                    }}
                                     renderInput={(params) => <TextField {...params} label="Settlement Currency" />}
-                                    filterOptions={(options, state) => options.filter(option => option !== baseFxCurrencyCode)} // Avoid selecting the same currency
+                                    getOptionLabel={(option) => option} // Ensure this returns a string
+                                    PaperComponent={CurrencyDropDownMenu}
                                 />
                             </Grid>
 
@@ -328,6 +371,7 @@ const MakeOrderForm: React.FC = () => {
                                     onChange={handleBaseFxCurrencyCode}
                                     isOptionEqualToValue={(option, value) => option === value}
                                     renderInput={(params) => <TextField {...params} label={orderSide === 'buy' ? 'Buy Currency' : 'Sell Currency'} />}
+                                    PaperComponent={CurrencyDropDownMenu}
                                 />
                             </Grid>
 
@@ -353,8 +397,13 @@ const MakeOrderForm: React.FC = () => {
                                     value={quoteFxCurrencyCode}
                                     onChange={handleQuoteFxCurrencyCode}
                                     isOptionEqualToValue={(option, value) => option === value}
+                                    filterOptions={(options, { inputValue }) => {
+                                        // Filter out the base currency and return options that match the input
+                                        return options.filter(option => option !== baseFxCurrencyCode && option.toLowerCase().includes(inputValue.toLowerCase()));
+                                    }}
                                     renderInput={(params) => <TextField {...params} label="Settlement Currency" />}
-                                    filterOptions={(options, state) => options.filter(option => option !== baseFxCurrencyCode)} // Avoid selecting the same currency
+                                    getOptionLabel={(option) => option} // Ensure this returns a string
+                                    PaperComponent={CurrencyDropDownMenu}
                                 />
                             </Grid>
                             <Grid item>
@@ -365,7 +414,10 @@ const MakeOrderForm: React.FC = () => {
                                             Settlement
                                         </>
                                         :
-                                        <strong style={{ color: 'red' }}>Min </strong>}
+                                        <>
+                                            <strong style={{ color: 'red' }}>Min </strong> Settlement
+                                        </>
+                                    }
                                     value={limit}
                                     type='number'
                                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
