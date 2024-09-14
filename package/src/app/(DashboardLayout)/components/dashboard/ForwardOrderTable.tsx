@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Table, TableBody, TableCell, TableHead, TableRow, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Typography, Table, TableBody, TableCell, TableHead, TableRow, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid } from '@mui/material';
 import DashboardCard from '@/app/(DashboardLayout)//components/shared/DashboardCard';
 
 const sampleOrders = [
@@ -24,12 +24,17 @@ const ForwardOrderTable: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedOrderId, setSelectedOrderId] = useState('');
+
     const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
     const user = localStorage.getItem('user');
     const parsedUser = user ? JSON.parse(user) : null;
     const portfolioId = parsedUser && parsedUser.portfolioId ? parsedUser.portfolioId : null;
 
+    const [switchToUserBoard, setSwitchToUserBoard] = useState(false); // Default to false (Outstanding Order Board)
+
     useEffect(() => {
+
+        // OPTION: Fetch all orders {status: ACTIVE}
         const fetchOrders = async () => {
             console.log("Fetching orders...");
             if (!portfolioId) {
@@ -39,7 +44,7 @@ const ForwardOrderTable: React.FC = () => {
             }
 
             try {
-                const response = await fetch(`${baseURL}/api/v1/order/status/ACTIVE`, {
+                const response = await fetch(`${baseURL}/api/v1/order`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + localStorage.getItem('token')
@@ -62,8 +67,46 @@ const ForwardOrderTable: React.FC = () => {
             }
         };
 
-        fetchOrders();
-    }, []);
+        // OPTION: Fetch user orders {status: ACTIVE}
+        const fetchUserOrders = async () => {
+            if (!portfolioId) {
+                setError('Portfolio ID not found');
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${baseURL}/api/v1/order/portfolio/${portfolioId}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    },
+                });
+                console.log("Response:", response);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch orders');
+                }
+                const data = await response.json();
+                console.log("Data:", data);
+
+                setOrders(data);
+            } catch (error) {
+                // setError(error.message);
+                // Use sample data if there's an error
+                setOrders(sampleOrders);
+            } finally {
+                setLoading(false);
+            }
+
+        }
+
+        if (switchToUserBoard) {
+            fetchUserOrders();
+        } else {
+            fetchOrders();
+        }
+
+    }, [switchToUserBoard]);
 
     const handleCancelOrder = async () => {
         try {
@@ -95,12 +138,23 @@ const ForwardOrderTable: React.FC = () => {
         setOpenDialog(false);
     };
 
+
+    const handleSwitchBoard = () => {
+        switchToUserBoard ? setSwitchToUserBoard(false) : setSwitchToUserBoard(true);
+    };
+
     if (loading) return <Typography>Loading...</Typography>;
 
     return (
         <>
-            <DashboardCard>
+            <DashboardCard title={switchToUserBoard ? "Outstanding Order Board" : "All Order Board"}>
+
                 <>
+                    <Grid container spacing={2}>
+                        <Button variant="outlined" color="primary" onClick={handleSwitchBoard}>
+                            Switch to {switchToUserBoard ? "All Order Board" : "Outstanding Order Board"}
+                        </Button>
+                    </Grid>
                     <Table>
                         <TableHead>
                             <TableRow>
