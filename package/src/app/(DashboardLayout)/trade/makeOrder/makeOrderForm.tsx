@@ -316,8 +316,8 @@ const MakeOrderForm: React.FC = () => {
                                     disablePortal
                                     options={fxRate.map((option) => option.currencyCode)}
                                     sx={{ width: 150 }}
-                                    value={baseFxCurrencyCode}
-                                    onChange={handleBaseFxCurrencyCode}
+                                    value={orderSide === 'buy' ? quoteFxCurrencyCode : baseFxCurrencyCode}
+                                    onChange={orderSide === 'buy' ? handleQuoteFxCurrencyCode : handleBaseFxCurrencyCode}
                                     isOptionEqualToValue={(option, value) => option === value}
                                     renderInput={(params) => <TextField {...params} label={orderSide === 'buy' ? 'Buy Currency' : 'Sell Currency'} />}
                                     PaperComponent={CurrencyDropDownMenu}
@@ -344,8 +344,8 @@ const MakeOrderForm: React.FC = () => {
                                     disablePortal
                                     options={fxRate.map((option) => option.currencyCode)}
                                     sx={{ width: 150 }}
-                                    value={quoteFxCurrencyCode}
-                                    onChange={handleQuoteFxCurrencyCode}
+                                    value={orderSide === 'buy' ? baseFxCurrencyCode : quoteFxCurrencyCode}
+                                    onChange={orderSide === 'buy' ? handleBaseFxCurrencyCode : handleQuoteFxCurrencyCode}
                                     isOptionEqualToValue={(option, value) => option === value}
                                     filterOptions={(options, { inputValue }) => {
                                         // Filter out the base currency and return options that match the input
@@ -398,8 +398,8 @@ const MakeOrderForm: React.FC = () => {
                                     disablePortal
                                     options={fxRate.map((option) => option.currencyCode)}
                                     sx={{ width: 150 }}
-                                    value={baseFxCurrencyCode}
-                                    onChange={handleBaseFxCurrencyCode}
+                                    value={orderSide === 'buy' ? quoteFxCurrencyCode : baseFxCurrencyCode}
+                                    onChange={orderSide === 'buy' ? handleQuoteFxCurrencyCode : handleBaseFxCurrencyCode}
                                     isOptionEqualToValue={(option, value) => option === value}
                                     renderInput={(params) => <TextField {...params} label={orderSide === 'buy' ? 'Buy Currency' : 'Sell Currency'} />}
                                     PaperComponent={CurrencyDropDownMenu}
@@ -425,8 +425,8 @@ const MakeOrderForm: React.FC = () => {
                                     disablePortal
                                     options={fxRate.map((option) => option.currencyCode)}
                                     sx={{ width: 150 }}
-                                    value={quoteFxCurrencyCode}
-                                    onChange={handleQuoteFxCurrencyCode}
+                                    value={orderSide === 'buy' ? baseFxCurrencyCode : quoteFxCurrencyCode}
+                                    onChange={orderSide === 'buy' ? handleBaseFxCurrencyCode : handleQuoteFxCurrencyCode}
                                     isOptionEqualToValue={(option, value) => option === value}
                                     filterOptions={(options, { inputValue }) => {
                                         // Filter out the base currency and return options that match the input

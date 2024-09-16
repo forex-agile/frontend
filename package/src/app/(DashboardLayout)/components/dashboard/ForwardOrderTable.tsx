@@ -6,9 +6,9 @@ import { set } from 'lodash';
 const sampleOrders = [
     {
         id: "1",
-        orderSide: "buy",
-        orderStatus: "active",
-        orderType: "market",
+        orderSide: " ",
+        orderStatus: " ",
+        orderType: " ",
         creationDate: "2024-09-06T00:00:00Z",
         expiryDate: "2024-09-10T00:00:00Z",
         baseFx: "USD",
@@ -63,7 +63,7 @@ const ForwardOrderTable: React.FC = () => {
             } catch (error) {
                 // setError(error.message);
                 // Use sample data if there's an error
-                setOrders(sampleOrders);
+                // setOrders(sampleOrders);
             } finally {
                 setLoading(false);
             }
@@ -95,7 +95,7 @@ const ForwardOrderTable: React.FC = () => {
             } catch (error) {
                 // setError(error.message);
                 // Use sample data if there's an error
-                setOrders(sampleOrders);
+                // setOrders(sampleOrders);
             } finally {
                 setLoading(false);
             }

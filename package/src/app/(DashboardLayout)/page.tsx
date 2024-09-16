@@ -21,7 +21,7 @@ const Dashboard = () => {
             <Grid item xs={6} lg={7}>
               <FxRatesTable />
             </Grid>
-            <Grid item xs={6} lg={5}>
+            <Grid item xs={6} sx={{ minHeight: "auto" }} lg={5}>
               <PortfolioCard />
             </Grid>
           </Grid>
