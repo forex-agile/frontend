@@ -78,7 +78,7 @@ const ForwardOrderTable: React.FC = () => {
             }
 
             try {
-                const response = await fetch(`${baseURL}/api/v1/order/portfolio/${portfolioId}?orderStatus=ACTIVE`, {
+                const response = await fetch(`${baseURL}/api/v1/order/portfolio/${portfolioId}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + localStorage.getItem('token')

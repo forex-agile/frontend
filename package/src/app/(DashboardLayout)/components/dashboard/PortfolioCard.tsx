@@ -17,7 +17,7 @@ import { useCurrencyContext } from "../currency/CurrencyProvider";
 
 // Components
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
-import React, { use, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ST } from "next/dist/shared/lib/utils";
 import { get, set } from "lodash";
 import { PieChart } from '@mui/x-charts/PieChart';
@@ -31,8 +31,8 @@ const PortfolioCard = (props: { PortfolioBalance?: number }) => {
   const successlight = theme.palette.success.light;
 
   // dialog control
-  const [DepositeFormOpen, setDepositeFormOpen] = React.useState(false);
-  const [TransferFormOpen, setTransferFormOpen] = React.useState(false);
+  const [DepositeFormOpen, setDepositeFormOpen] = useState(false);
+  const [TransferFormOpen, setTransferFormOpen] = useState(false);
 
   const handleDepositFormClickOpen = () => { setDepositeFormOpen(true) };
   const handleDepositeFormClose = () => { setDepositeFormOpen(false) };
@@ -40,11 +40,11 @@ const PortfolioCard = (props: { PortfolioBalance?: number }) => {
   const handleTransferFormClose = () => { setTransferFormOpen(false) };
 
   // Variables
-  const [portfolioData, setPortfolioData] = React.useState({});
-  const [portfolioBalance, setPortfolioBalance] = React.useState(props.PortfolioBalance);
+  const [portfolioData, setPortfolioData] = useState({});
+  const [portfolioBalance, setPortfolioBalance] = useState(props.PortfolioBalance);
   const { currency, setCurrency } = useCurrencyContext();
-  const [rerender, setRerender] = React.useState(false);
-  const [chartData, setChartData] = React.useState([]);
+  const [rerender, setRerender] = useState(false);
+  const [chartData, setChartData] = useState([]);
 
   // API related variables
   const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
