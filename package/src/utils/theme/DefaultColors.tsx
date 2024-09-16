@@ -142,4 +142,108 @@ const baselightTheme = createTheme({
   },
 });
 
-export { baselightTheme };
+//TODO: Add dark theme
+const basedarkTheme = createTheme({
+  direction: "ltr",
+  palette: {
+    mode: "dark",
+    primary: {
+      main: "#90caf9",
+      light: "#e3f2fd",
+      dark: "#42a5f5",
+    },
+    secondary: {
+      main: "#f48fb1",
+      light: "#f8bbd0",
+      dark: "#f06292",
+    },
+    success: {
+      main: "#66bb6a",
+      light: "#e8f5e9",
+      dark: "#43a047",
+      contrastText: "#000000",
+    },
+    info: {
+      main: "#29b6f6",
+    },
+  },
+  typography: {
+    fontFamily: plus.style.fontFamily,
+    h1: {
+      fontWeight: 600,
+      fontSize: "2.25rem",
+      lineHeight: "2.75rem",
+      fontFamily: plus.style.fontFamily,
+    },
+    h2: {
+      fontWeight: 600,
+      fontSize: "1.875rem",
+      lineHeight: "2.25rem",
+      fontFamily: plus.style.fontFamily,
+    },
+    h3: {
+      fontWeight: 600,
+      fontSize: "1.5rem",
+      lineHeight: "1.75rem",
+      fontFamily: plus.style.fontFamily,
+    },
+    h4: {
+      fontWeight: 600,
+      fontSize: "1.3125rem",
+      lineHeight: "1.6rem",
+    },
+    h5: {
+      fontWeight: 600,
+      fontSize: "1.125rem",
+      lineHeight: "1.6rem",
+    },
+    h6: {
+      fontWeight: 600,
+      fontSize: "1rem",
+      lineHeight: "1.2rem",
+    },
+    button: {
+      textTransform: "capitalize",
+      fontWeight: 400,
+    },
+    body1: {
+      fontSize: "0.875rem",
+      fontWeight: 400,
+      lineHeight: "1.334rem",
+    },
+    body2: {
+      fontSize: "0.75rem",
+      letterSpacing: "0rem",
+      fontWeight: 400,
+      lineHeight: "1rem",
+    },
+    subtitle1: {
+      fontSize: "0.875rem",
+      fontWeight: 400,
+    },
+    subtitle2: {
+      fontSize: "0.875rem",
+      fontWeight: 400,
+    },
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        ".MuiPaper-elevation9, .MuiPopover-root .MuiPaper-elevation": {
+          boxShadow:
+            "rgb(145 158 171 / 30%) 0px 0px 2px 0px, rgb(145 158 171 / 12%) 0px 12px 24px -4px !important",
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: "7px",
+        },
+      },
+    },
+  },
+});
+
+
+export { baselightTheme, basedarkTheme };

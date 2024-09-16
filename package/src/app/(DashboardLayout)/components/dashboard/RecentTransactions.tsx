@@ -11,12 +11,51 @@ import {
   timelineOppositeContentClasses,
 } from '@mui/lab';
 import { Link, Typography } from '@mui/material';
+import { use, useEffect } from 'react';
+
+
 
 const RecentTransactions = () => {
+
+  const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const user = localStorage.getItem('user');
+  const parsedUser = user ? JSON.parse(user) : null;
+  const portfolioId = parsedUser && parsedUser.portfolioId ? parsedUser.portfolioId : null;
+  const userId = parsedUser && parsedUser.id ? parsedUser.id : null;
+
+  useEffect(() => {
+    fetch(`${baseURL}/api/v1/trade/portfolio/${portfolioId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.text();
+      })
+      .then((text) => {
+        if (!text) {
+          throw new Error('Response body is empty');
+        }
+        return JSON.parse(text); // Parse JSON only if text is not empty
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error('Error fetching recent transactions:', error);
+      });
+
+  }, []);
+
   return (
     <DashboardCard title="Recent Transactions">
       <>
-        <Timeline
+        {/* <Timeline
           className="theme-timeline"
           nonce={undefined}
           onResize={undefined}
@@ -93,7 +132,9 @@ const RecentTransactions = () => {
             </TimelineSeparator>
             <TimelineContent>Payment Received</TimelineContent>
           </TimelineItem>
-        </Timeline>
+        </Timeline> */}
+
+
       </>
     </DashboardCard>
   );

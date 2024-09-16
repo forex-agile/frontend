@@ -1,7 +1,8 @@
 import { useMediaQuery, Box, Drawer } from "@mui/material";
 import SidebarItems from "./SidebarItems";
 import { Upgrade } from "./Updrade";
-import { Sidebar, Logo } from 'react-mui-sidebar';
+import { Sidebar } from 'react-mui-sidebar';
+import Logo from "@/app/(DashboardLayout)/layout/shared/logo/Logo";
 
 interface ItemType {
   isMobileSidebarOpen: boolean;
@@ -70,15 +71,15 @@ const MSidebar = ({
               showProfile={false}
             >
               {/* ------------------------------------------- */}
-              {/* Logo */}
-              {/* ------------------------------------------- */}
-              <Logo img="/images/logos/dark-logo.svg" />
+                <Box sx={{ paddingLeft: "30px", paddingTop: "5px"}}>
+                  <Logo img="/images/logos/dark-logo.svg" />
+                </Box>
               <Box>
                 {/* ------------------------------------------- */}
                 {/* Sidebar Items */}
                 {/* ------------------------------------------- */}
                 <SidebarItems />
-                <Upgrade />
+                {/* <Upgrade /> */}
               </Box>
             </Sidebar >
           </Box>

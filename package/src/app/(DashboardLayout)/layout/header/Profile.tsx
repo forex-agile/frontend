@@ -89,6 +89,7 @@ const Profile = () => {
             component={Link}
             fullWidth
           >
+            {/* TODO: Add Logout logic to clear localStorage */}
             Logout
           </Button>
         </Box>

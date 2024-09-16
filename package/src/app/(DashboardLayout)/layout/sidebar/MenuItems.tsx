@@ -24,52 +24,60 @@ const Menuitems = [
   },
   {
     navlabel: true,
-    subheader: "Utilities",
+    subheader: "Trade",
   },
   {
     id: uniqueId(),
-    title: "Typography",
+    title: "Make Spot Order",
     icon: IconTypography,
-    href: "/utilities/typography",
-  },
-  {
-    id: uniqueId(),
-    title: "Shadow",
-    icon: IconCopy,
-    href: "/utilities/shadow",
+    href: "/trade/makeOrder",
   },
   {
     navlabel: true,
-    subheader: "Auth",
+    subheader: "User Account",
   },
+
   {
     id: uniqueId(),
-    title: "Login",
+    title: "My Portfolio",
     icon: IconLogin,
-    href: "/authentication/login",
+    href: "/userAccount/myPortfolio",
   },
   {
     id: uniqueId(),
-    title: "Register",
-    icon: IconUserPlus,
-    href: "/authentication/register",
+    title: "Trade History",
+    icon: IconLogin,
+    href: "/userAccount/transactions",
   },
-  {
-    navlabel: true,
-    subheader: "Extra",
-  },
-  {
-    id: uniqueId(),
-    title: "Icons",
-    icon: IconMoodHappy,
-    href: "/icons",
-  },
-  {
-    id: uniqueId(),
-    title: "Sample Page",
-    icon: IconAperture,
-    href: "/sample-page",
-  },
+
+  // {
+  //   id: uniqueId(),
+  //   title: "Login",
+  //   icon: IconLogin,
+  //   href: "/authentication/login",
+  // },
+  // {
+  //   id: uniqueId(),
+  //   title: "Register",
+  //   icon: IconUserPlus,
+  //   href: "/authentication/register",
+  // },
+  // {
+  //   navlabel: true,
+  //   subheader: "OTHERS",
+  // },
+  // {
+  //   id: uniqueId(),
+  //   title: "Icons",
+  //   icon: IconMoodHappy,
+  //   href: "/icons",
+  // },
+  // {
+  //   id: uniqueId(),
+  //   title: "Sample Page",
+  //   icon: IconAperture,
+  //   href: "/sample-page",
+  // },
 ];
 
 export default Menuitems;

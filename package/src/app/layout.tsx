@@ -2,6 +2,12 @@
 import { baselightTheme } from "@/utils/theme/DefaultColors";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import { makeServer } from "../mirage/server";
+
+
+// if (process.env.NODE_ENV === 'development') {
+//   makeServer();
+// }
 
 export default function RootLayout({
   children,
