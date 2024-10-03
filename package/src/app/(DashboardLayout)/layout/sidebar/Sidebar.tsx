@@ -71,9 +71,9 @@ const MSidebar = ({
               showProfile={false}
             >
               {/* ------------------------------------------- */}
-                <Box sx={{ paddingLeft: "30px", paddingTop: "5px"}}>
-                  <Logo img="/images/logos/dark-logo.svg" />
-                </Box>
+              <Box sx={{ paddingLeft: "30px", paddingTop: "5px" }}>
+                {/* <Logo img="/images/logos/dark-logo.svg" /> */}
+              </Box>
               <Box>
                 {/* ------------------------------------------- */}
                 {/* Sidebar Items */}
@@ -118,7 +118,7 @@ const MSidebar = ({
           {/* ------------------------------------------- */}
           {/* Logo */}
           {/* ------------------------------------------- */}
-          <Logo img="/images/logos/dark-logo.svg" />
+          {/* <Logo img="/images/logos/dark-logo.svg" /> */}
           {/* ------------------------------------------- */}
           {/* Sidebar Items */}
           {/* ------------------------------------------- */}
