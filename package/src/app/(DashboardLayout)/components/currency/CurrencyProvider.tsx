@@ -20,6 +20,7 @@ const CurrencyProvider = ({ children }: { children: ReactNode }) => {
     const [currency, setCurrency] = useState<string>('USD'); // Default to 'USD' initially
     const [isHydrated, setIsHydrated] = useState(false);
 
+    // For record user's preference or previous options
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const savedCurrency = localStorage.getItem('currency');
