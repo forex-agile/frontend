@@ -35,7 +35,7 @@ const PortfolioCard = (props: { PortfolioBalance?: number }) => {
   const [TransferFormOpen, setTransferFormOpen] = useState(false);
 
   const handleDepositFormClickOpen = () => { setDepositeFormOpen(true) };
-  const handleDepositeFormClose = () => { setDepositeFormOpen(false) };
+  const handleDepositFormClose = () => { setDepositeFormOpen(false) };
   const handleTransferFormClickOpen = () => { setTransferFormOpen(true) };
   const handleTransferFormClose = () => { setTransferFormOpen(false) };
 
@@ -130,25 +130,23 @@ const PortfolioCard = (props: { PortfolioBalance?: number }) => {
 
 
     // Recalculate the fx rate based on the current chose currency, if the currency is not USD
-
     // Get the fx rate for the chosen currency
 
-    const inversedNewBasefxRate = formattedData.find((item: any) => item.CURRENCY === currency).FX_RATE;
-
-    console.log("Current fx rate for ", currency, "is:", inversedNewBasefxRate);
+    const inverseNewBaseFxRate = formattedData.find((item: any) => item.CURRENCY === currency).FX_RATE;
+    console.log("Current fx rate for ", currency, "is:", inverseNewBaseFxRate);
 
     // Mulitply the old base fx rate table (formattedData) by the inverse of the new base fx rate
     const newFxRateTable = formattedData.map((item: any) => ({
       ...item,
-      FX_RATE: item.FX_RATE / inversedNewBasefxRate,
+      FX_RATE: item.FX_RATE / inverseNewBaseFxRate,
     }));
 
     return newFxRateTable;
   };
 
 
-  // Submit deposite form data to backend by api
-  const handleDepositeFormSubmit = (currency: string, value: number) => {
+  // Submit deposit form data to backend by api
+  const handleDepositFormSubmit = (currency: string, value: number) => {
 
     // Get the portfolio ID from the user object
     console.log("Calling API for fund-transfer [Deposit] from domain: ", baseURL);
@@ -225,62 +223,6 @@ const PortfolioCard = (props: { PortfolioBalance?: number }) => {
   }, [props.PortfolioBalance, currency, rerender]);
 
 
-
-  // chart
-  // const optionscolumnchart: any = {
-  //   chart: {
-  //     type: 'donut',
-  //     fontFamily: "'Plus Jakarta Sans', sans-serif;",
-  //     foreColor: '#adb0bb',
-  //     toolbar: {
-  //       show: false,
-  //     },
-  //     height: 205,
-  //   },
-  //   colors: [primary, primarylight, '#F9F9FD'],
-  //   plotOptions: {
-  //     pie: {
-  //       startAngle: 0,
-  //       endAngle: 360,
-  //       donut: {
-  //         size: '100%',
-  //         background: 'transparent',
-  //       },
-  //     },
-  //   },
-  //   tooltip: {
-  //     theme: theme.palette.mode === 'dark',
-  //     fillSeriesColor: true,
-  //   },
-  //   stroke: {
-  //     show: false,
-  //   },
-  //   dataLabels: {
-  //     enabled: true,
-  //   },
-  //   legend: {
-  //     show: true,
-  //     position: 'left',
-  //   },
-  //   responsive: [
-  //     {
-  //       breakpoint: 991,
-  //       options: {
-  //         chart: {
-  //           width: 150,
-  //         },
-  //       },
-  //     },
-  //   ],
-  // };
-
-  // const seriescolumnchart: any = amountRatio;
-
-
-
-
-
-
   return (
     <DashboardCard>
       <>
@@ -314,7 +256,7 @@ const PortfolioCard = (props: { PortfolioBalance?: number }) => {
 
           <Grid item direction={"row"} spacing={2} xs={12} lg={6}>
 
-            {/* Deposite Button & Deposite Form */}
+            {/* Deposit Button & Deposit Form */}
 
 
             <Button variant="outlined" color="primary" onClick={handleDepositFormClickOpen} sx={{ marginRight: 2 }}>
@@ -322,7 +264,7 @@ const PortfolioCard = (props: { PortfolioBalance?: number }) => {
             </Button>
             <Dialog
               open={DepositeFormOpen}
-              onClose={handleDepositeFormClose}
+              onClose={handleDepositFormClose}
               PaperProps={{
                 component: 'form',
                 onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
@@ -331,8 +273,8 @@ const PortfolioCard = (props: { PortfolioBalance?: number }) => {
                   const formJson = Object.fromEntries((formData as any).entries());
                   const currency = formJson.Currency;
                   const value = formJson.Value;
-                  handleDepositeFormSubmit(currency, value);
-                  handleDepositeFormClose();
+                  handleDepositFormSubmit(currency, value);
+                  handleDepositFormClose();
                 },
               }}
             >
@@ -370,14 +312,13 @@ const PortfolioCard = (props: { PortfolioBalance?: number }) => {
               </DialogContent>
               <DialogActions>
                 <Button type="submit">Deposit </Button>
-                <Button onClick={handleDepositeFormClose}>Cancel</Button>
+                <Button onClick={handleDepositFormClose}>Cancel</Button>
               </DialogActions>
             </Dialog>
 
 
 
             {/* Transfer Button & Transfer Form */}
-
             <Button variant="outlined" color="primary" onClick={handleTransferFormClickOpen}>
               Withdraw
             </Button>
